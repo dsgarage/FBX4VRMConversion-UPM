@@ -107,3 +107,9 @@ packages/
 
 # Test results
 TestResults/
+
+# UPM Package - exclude Unity project files (this is a package, not a project)
+ProjectSettings/
+Assets/
+Packages/
+*.inputactions
