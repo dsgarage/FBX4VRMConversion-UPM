@@ -22,9 +22,18 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
   - `ExportReport` with JSON serialization
   - `ReportManager` for saving and logging reports
 
-## [0.1.0] - TBD
+## [0.1.0] - 2024-11-27
 
-### Planned
-- Phase 0: Baseline
-  - RepoA (UniVRM-fork) integration
-  - Minimal GUI for Prefab instance export
+### Added (Phase 0: Baseline)
+- UniVRM-fork integration (v0.130.1-f1)
+  - Dependencies configured in package.json
+  - Support for both VRM 0.x and VRM 1.0 export
+- Minimal Export GUI (`Tools > FBX4VRM > Export Window`)
+  - Root object selection from scene
+  - VRM version selection (0.x / 1.0)
+  - Output folder configuration
+  - Non-destructive export (clones object before processing)
+- `RootValidationProcessor`
+  - Validates Humanoid Animator
+  - Checks for mesh renderers
+  - Warns about missing VRM metadata components
