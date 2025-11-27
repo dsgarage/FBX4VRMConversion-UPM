@@ -83,9 +83,11 @@ namespace DSGarage.FBX4VRM.Editor.Processors
             // Phase 0: Root検証
             AddProcessor(new RootValidationProcessor());
 
-            // Phase 1以降で追加予定:
-            // AddProcessor(new LilToonDetectProcessor());
-            // AddProcessor(new LilToonToMToonProcessor());
+            // Phase 1: lilToonサポート
+            AddProcessor(new LilToonDetectProcessor());
+            AddProcessor(new LilToonToMToonProcessor());
+
+            // Phase 2以降で追加予定:
             // AddProcessor(new GltfValueClampProcessor());
             // AddProcessor(new ExpressionSetupProcessor());
             // AddProcessor(new SpringBoneConvertProcessor());
