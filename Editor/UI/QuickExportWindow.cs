@@ -358,6 +358,29 @@ namespace DSGarage.FBX4VRM.Editor.UI
                     meta = vrm10.Vrm?.Meta;
                 }
 
+                // メタデータがない場合はデフォルトを作成
+                if (meta == null)
+                {
+                    meta = ScriptableObject.CreateInstance<UniVRM10.VRM10ObjectMeta>();
+                    meta.Name = root.name;
+                    meta.Version = "1.0";
+                    meta.Authors = new System.Collections.Generic.List<string> { "Unknown" };
+                    meta.CopyrightInformation = "";
+                    meta.ContactInformation = "";
+                    meta.References = new System.Collections.Generic.List<string>();
+                    meta.ThirdPartyLicenses = "";
+                    meta.OtherLicenseUrl = "";
+                    meta.AvatarPermission = UniGLTF.Extensions.VRMC_vrm.AvatarPermissionType.onlyAuthor;
+                    meta.AllowExcessivelyViolentUsage = false;
+                    meta.AllowExcessivelySexualUsage = false;
+                    meta.CommercialUsage = UniGLTF.Extensions.VRMC_vrm.CommercialUsageType.personalNonProfit;
+                    meta.AllowPoliticalOrReligiousUsage = false;
+                    meta.AllowAntisocialOrHateUsage = false;
+                    meta.CreditNotation = UniGLTF.Extensions.VRMC_vrm.CreditNotationType.required;
+                    meta.AllowRedistribution = false;
+                    meta.Modification = UniGLTF.Extensions.VRMC_vrm.ModificationType.prohibited;
+                }
+
                 var bytes = UniVRM10.Vrm10Exporter.Export(settings, root, vrmMeta: meta);
                 if (bytes != null)
                 {
