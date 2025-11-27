@@ -7,6 +7,26 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+## [0.3.0] - 2024-11-27
+
+### Added (Phase 2: Safety)
+- `HumanoidValidationProcessor`
+  - Validates all 15 VRM-required Humanoid bones (Hips, Spine, Head, Arms, Legs)
+  - Checks 9 recommended bones (Neck, Chest, Shoulders, Toes, Eyes, Jaw)
+  - T-Pose detection with angle-based arm position check
+  - Bone hierarchy validation (parent-child relationships)
+  - Detailed warnings for missing recommended bones and hierarchy issues
+- `GltfValueClampProcessor`
+  - Clamps HDR and out-of-range color values to glTF spec (0-1)
+  - Clamps float properties (Metallic, Smoothness, Cutoff, etc.)
+  - Generates Warning for every clamped value (no silent modifications)
+  - Per-material grouped warnings with before/after values
+  - Supports 18 color properties and 8 float properties
+
+### Changed
+- Processor pipeline order updated:
+  - RootValidation (0) → HumanoidValidation (5) → LilToonDetect (10) → LilToonToMToon (20) → GltfValueClamp (30)
+
 ## [0.2.0] - 2024-11-27
 
 ### Added (Phase 1: lilToon Support)
