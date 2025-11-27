@@ -9,10 +9,9 @@
   "changelogUrl": "https://github.com/dsgarage/FBX4VRMConversion/blob/main/CHANGELOG.md",
   "licensesUrl": "https://github.com/dsgarage/FBX4VRMConversion/blob/main/LICENSE",
   "dependencies": {
-    "com.vrmc.gltf": "https://github.com/dsgarage/UniVRM-fork.git?path=/Packages/com.vrmc.gltf#v0.130.1-f1",
-    "com.vrmc.univrm": "https://github.com/dsgarage/UniVRM-fork.git?path=/Packages/com.vrmc.univrm#v0.130.1-f1",
-    "com.vrmc.vrm": "https://github.com/dsgarage/UniVRM-fork.git?path=/Packages/VRM#v0.130.1-f1",
-    "com.vrmc.vrmshaders": "https://github.com/dsgarage/UniVRM-fork.git?path=/Packages/com.vrmc.vrmshaders#v0.130.1-f1"
+    "com.vrmc.gltf": "https://github.com/dsgarage/UniVRM-fork.git?path=/Packages/UniGLTF#v0.130.1-f1",
+    "com.vrmc.univrm": "https://github.com/dsgarage/UniVRM-fork.git?path=/Packages/VRM#v0.130.1-f1",
+    "com.vrmc.vrm": "https://github.com/dsgarage/UniVRM-fork.git?path=/Packages/VRM10#v0.130.1-f1"
   },
   "vrmCompatibility": {
     "minVersion": "v0.130.1-f1",
