@@ -7,6 +7,24 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [0.1.0] - In Development
 
+### Phase 3: Expression/Dynamics
+- `ExpressionsSetupProcessor`
+  - Detects BlendShapes from SkinnedMeshRenderer
+  - Maps BlendShape names to VRM Expression names automatically
+  - Supports multiple naming conventions (English, Japanese, VRChat)
+  - Maps 17 standard VRM expressions (emotions, lip-sync, blink, look)
+  - Reports missing recommended expressions as warnings
+  - Handles duplicate mapping conflicts
+- `SpringBoneConvertProcessor`
+  - Detects existing VRM SpringBone (0.x and 1.0)
+  - Converts VRChat PhysBone to VRM SpringBone parameters
+  - Converts DynamicBone to VRM SpringBone parameters
+  - Uses reflection for SDK detection (works without VRChat SDK installed)
+  - Maps physics parameters: stiffness, gravity, drag, radius
+  - Warns about approximate conversion (different physics models)
+- Processor pipeline order updated:
+  - ... → GltfValueClamp (30) → ExpressionsSetup (40) → SpringBoneConvert (50)
+
 ### Phase 2: Safety
 - `HumanoidValidationProcessor`
   - Validates all 15 VRM-required Humanoid bones (Hips, Spine, Head, Arms, Legs)
