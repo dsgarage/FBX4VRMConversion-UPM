@@ -7,6 +7,29 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [0.1.0] - In Development
 
+### Phase 4: UX Polish
+- Preset Management System
+  - `ExportPreset` ScriptableObject for saving export settings
+  - Save/load presets per project or platform (VRChat, Cluster, etc.)
+  - VRM metadata presets (author, license, permissions)
+  - Per-processor enable/disable settings
+  - Custom expression mappings
+  - Tags for organizing presets
+- `PresetManager` utility class
+  - Find all presets (built-in and user-created)
+  - Filter presets by tags
+  - Save/delete presets with confirmation
+  - Built-in preset creation menu
+- Quick Export Window (`Tools > FBX4VRM > Quick Export` or `Ctrl+Shift+E`)
+  - One-button VRM export workflow
+  - Auto-select from Hierarchy selection
+  - Preset dropdown for quick switching
+  - Streamlined UI with export info preview
+  - Success dialog with Show in Finder / View Report options
+- Hierarchy Context Menu
+  - Right-click on GameObject → `FBX4VRM > Quick Export VRM`
+  - Right-click on GameObject → `FBX4VRM > Export with Settings...`
+
 ### Phase 3: Expression/Dynamics
 - `ExpressionsSetupProcessor`
   - Detects BlendShapes from SkinnedMeshRenderer
