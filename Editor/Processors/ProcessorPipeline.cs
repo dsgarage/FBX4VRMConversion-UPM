@@ -93,9 +93,11 @@ namespace DSGarage.FBX4VRM.Editor.Processors
             // Phase 2: glTF値クランプ（lilToon変換の後）
             AddProcessor(new GltfValueClampProcessor());
 
-            // Phase 3以降で追加予定:
-            // AddProcessor(new ExpressionSetupProcessor());
-            // AddProcessor(new SpringBoneConvertProcessor());
+            // Phase 3: Expression/Dynamics
+            AddProcessor(new ExpressionsSetupProcessor());
+            AddProcessor(new SpringBoneConvertProcessor());
+
+            // Phase 4以降で追加予定:
             // AddProcessor(new MetaPresetApplyProcessor());
             // AddProcessor(new PoseFreezeProcessor());
         }
