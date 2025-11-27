@@ -382,7 +382,7 @@ namespace DSGarage.FBX4VRM.Editor.UI
 
         private void ShowExportSuccessDialog(string path, ExportReport report)
         {
-            var warningCount = report.Notifications.Count(n => n.Level == NotificationLevel.Warning);
+            var warningCount = report.Notifications.Count(n => n.Level == "Warning");
             var message = $"VRM exported successfully!\n\n{path}";
 
             if (warningCount > 0)
