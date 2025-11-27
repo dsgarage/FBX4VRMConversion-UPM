@@ -80,10 +80,17 @@ namespace DSGarage.FBX4VRM.Editor.Processors
         /// </summary>
         public void RegisterDefaultProcessors()
         {
-            // Phase 0で実装予定のProcessorをここに追加していく
-            // AddProcessor(new RootValidationProcessor());
+            // Phase 0: Root検証
+            AddProcessor(new RootValidationProcessor());
+
+            // Phase 1以降で追加予定:
             // AddProcessor(new LilToonDetectProcessor());
-            // etc.
+            // AddProcessor(new LilToonToMToonProcessor());
+            // AddProcessor(new GltfValueClampProcessor());
+            // AddProcessor(new ExpressionSetupProcessor());
+            // AddProcessor(new SpringBoneConvertProcessor());
+            // AddProcessor(new MetaPresetApplyProcessor());
+            // AddProcessor(new PoseFreezeProcessor());
         }
     }
 

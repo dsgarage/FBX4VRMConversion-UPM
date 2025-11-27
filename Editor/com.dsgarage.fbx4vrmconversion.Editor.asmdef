@@ -2,7 +2,11 @@
   "name": "com.dsgarage.fbx4vrmconversion.Editor",
   "rootNamespace": "DSGarage.FBX4VRM.Editor",
   "references": [
-    "com.dsgarage.fbx4vrmconversion.Runtime"
+    "com.dsgarage.fbx4vrmconversion.Runtime",
+    "VRM",
+    "VRM10",
+    "UniGLTF",
+    "UniHumanoid"
   ],
   "includePlatforms": [
     "Editor"
