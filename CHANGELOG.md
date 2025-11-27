@@ -7,20 +7,35 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
-### Added
-- Initial UPM package structure
-- Processor pipeline architecture
-  - `IExportProcessor` interface
-  - `ExportProcessorBase` base class
-  - `ProcessorPipeline` for managing processor execution
-  - `ExportContext` for non-destructive processing
-- Notification system
-  - `NotificationLevel` (Info, Warning, Error)
-  - `ProcessorNotification` for individual notifications
-  - `ProcessorResult` for processor execution results
-- Report system
-  - `ExportReport` with JSON serialization
-  - `ReportManager` for saving and logging reports
+## [0.2.0] - 2024-11-27
+
+### Added (Phase 1: lilToon Support)
+- `LilToonDetectProcessor`
+  - Detects lilToon materials in the model
+  - Identifies shader variants (Cutout, Transparent, Outline, etc.)
+  - Stores detection results in SharedData for downstream processors
+- `LilToonToMToonProcessor`
+  - Converts lilToon materials to MToon format
+  - Maps properties: base color, normal map, emission, rim light, outline
+  - Handles HDR color clamping with warnings
+  - Non-destructive (creates material copies)
+- `LilToonToMToonConverter` utility class
+  - Property mapping between lilToon and MToon10
+  - Support for VRM 0.x MToon and VRM 1.0 MToon10
+- Export Preview Window (`ExportPreviewWindow`)
+  - Pre-export analysis showing detected issues
+  - Color-coded notifications (Info/Warning/Error)
+  - Ability to proceed or cancel based on analysis
+- Export Report Window (`ExportReportWindow`)
+  - Post-export summary with all notifications
+  - Filter by notification level
+  - Save report as JSON
+  - Copy to clipboard
+  - Show exported file in Finder
+
+### Changed
+- Export Window now shows Preview button alongside Export button
+- Export completion now opens Report Window instead of dialog
 
 ## [0.1.0] - 2024-11-27
 

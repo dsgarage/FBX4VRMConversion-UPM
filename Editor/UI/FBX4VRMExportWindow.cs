@@ -148,11 +148,34 @@ namespace DSGarage.FBX4VRM.Editor.UI
 
             using (new EditorGUI.DisabledGroupScope(!canExport))
             {
-                if (GUILayout.Button("Export VRM", GUILayout.Height(40)))
+                using (new EditorGUILayout.HorizontalScope())
+                {
+                    // プレビューボタン
+                    if (GUILayout.Button("Preview", GUILayout.Height(40), GUILayout.Width(100)))
+                    {
+                        ShowPreview();
+                    }
+
+                    // Exportボタン
+                    if (GUILayout.Button("Export VRM", GUILayout.Height(40)))
+                    {
+                        ExecuteExport();
+                    }
+                }
+            }
+        }
+
+        private void ShowPreview()
+        {
+            if (_selectedRoot == null) return;
+
+            ExportPreviewWindow.Show(_selectedRoot, _vrmVersion, _pipeline, (confirmed) =>
+            {
+                if (confirmed)
                 {
                     ExecuteExport();
                 }
-            }
+            });
         }
 
         private void DrawLastResult()
@@ -238,26 +261,29 @@ namespace DSGarage.FBX4VRM.Editor.UI
                 // パイプライン実行
                 _lastResult = _pipeline.Execute(context);
 
+                // レポート生成
+                var report = ExportReport.FromPipelineResult(_lastResult, context);
+
                 if (_lastResult.Success)
                 {
                     // UniVRMでExport
                     ExportWithUniVRM(cloned, fullPath);
 
-                    // レポート生成
-                    var report = ExportReport.FromPipelineResult(_lastResult, context);
+                    // レポート保存
                     ReportManager.LogReport(report);
                     ReportManager.SaveReport(report);
 
                     Debug.Log($"[FBX4VRM] Export completed: {fullPath}");
-                    EditorUtility.DisplayDialog("Export Complete",
-                        $"VRM exported successfully!\n\n{fullPath}", "OK");
+
+                    // レポートウィンドウを表示
+                    ExportReportWindow.Show(report);
                 }
                 else
                 {
                     Debug.LogError($"[FBX4VRM] Export failed at {_lastResult.StoppedAtProcessorId}");
-                    EditorUtility.DisplayDialog("Export Failed",
-                        $"Export failed at processor: {_lastResult.StoppedAtProcessorId}\n\n" +
-                        "See Console for details.", "OK");
+
+                    // レポートウィンドウを表示（失敗時も）
+                    ExportReportWindow.Show(report);
                 }
             }
             finally
