@@ -3,6 +3,8 @@ using System.IO;
 using System.Linq;
 using UnityEditor;
 using UnityEngine;
+using DSGarage.FBX4VRM.Editor.Localization;
+using DSGarage.FBX4VRM.Editor.Logging;
 using DSGarage.FBX4VRM.Editor.Presets;
 using DSGarage.FBX4VRM.Editor.Processors;
 using DSGarage.FBX4VRM.Editor.Reports;
@@ -67,7 +69,8 @@ namespace DSGarage.FBX4VRM.Editor.UI
             if (_autoSelectFromHierarchy && Selection.activeGameObject != null)
             {
                 var obj = Selection.activeGameObject;
-                if (obj.scene.IsValid() && IsValidVrmSource(obj))
+                // シーンオブジェクトまたはPrefab Assetの場合に選択
+                if (IsValidVrmSource(obj))
                 {
                     _selectedObject = obj;
                     Repaint();
@@ -80,11 +83,21 @@ namespace DSGarage.FBX4VRM.Editor.UI
             _availablePresets = PresetManager.GetAllPresets();
             _presetNames = _availablePresets.Select(p => p.presetName).ToArray();
 
-            // デフォルトプリセットを選択
+            // VRChatプリセットをデフォルトで選択
             if (_selectedPreset == null && _availablePresets.Count > 0)
             {
-                _selectedPresetIndex = 0;
-                _selectedPreset = _availablePresets[0];
+                // VRChatプリセットを優先的に探す
+                var vrchatIndex = _availablePresets.FindIndex(p => p.presetName == "VRChat");
+                if (vrchatIndex >= 0)
+                {
+                    _selectedPresetIndex = vrchatIndex;
+                    _selectedPreset = _availablePresets[vrchatIndex];
+                }
+                else
+                {
+                    _selectedPresetIndex = 0;
+                    _selectedPreset = _availablePresets[0];
+                }
             }
         }
 
@@ -146,13 +159,16 @@ namespace DSGarage.FBX4VRM.Editor.UI
             if (_selectedObject != null)
             {
                 var (isValid, message) = ValidateObject(_selectedObject);
-                EditorGUILayout.HelpBox(
-                    message,
-                    isValid ? MessageType.None : MessageType.Warning);
+                var messageType = isValid
+                    ? (IsPrefabAsset(_selectedObject) ? MessageType.Info : MessageType.None)
+                    : MessageType.Warning;
+                EditorGUILayout.HelpBox(message, messageType);
             }
             else
             {
-                EditorGUILayout.HelpBox("Select a Humanoid model from the scene", MessageType.Warning);
+                EditorGUILayout.HelpBox(
+                    Localize.Get("HumanoidモデルをシーンまたはAssetsから選択してください", "Select a Humanoid model from the scene or Assets"),
+                    MessageType.Warning);
             }
         }
 
@@ -190,7 +206,15 @@ namespace DSGarage.FBX4VRM.Editor.UI
             {
                 using (new EditorGUI.IndentLevelScope())
                 {
-                    EditorGUILayout.LabelField("Version", _selectedPreset.vrmVersion == 1 ? "VRM 1.0" : "VRM 0.x");
+                    EditorGUILayout.LabelField("Version", _selectedPreset.vrmVersion == 1 ? "VRM 1.0 (Avatar構築にバグあり)" : "VRM 0.x");
+                    if (_selectedPreset.vrmVersion == 1)
+                    {
+                        EditorGUILayout.HelpBox(
+                            Localize.Get(
+                                "⚠️ VRM 1.0 はAvatar構築にバグがあります。",
+                                "⚠️ VRM 1.0 has a bug in Avatar construction."),
+                            MessageType.Warning);
+                    }
                     if (!string.IsNullOrEmpty(_selectedPreset.description))
                     {
                         EditorGUILayout.LabelField("Description", _selectedPreset.description, EditorStyles.wordWrappedLabel);
@@ -247,6 +271,10 @@ namespace DSGarage.FBX4VRM.Editor.UI
 
             _isExporting = true;
 
+            // Prefab Assetの場合は一時的にシーンへインスタンス化
+            GameObject sourceInstance = null;
+            bool isPrefabAsset = IsPrefabAsset(_selectedObject);
+
             try
             {
                 var outputPath = GetOutputPath();
@@ -258,9 +286,23 @@ namespace DSGarage.FBX4VRM.Editor.UI
                     Directory.CreateDirectory(outputDir);
                 }
 
+                if (isPrefabAsset)
+                {
+                    sourceInstance = (GameObject)PrefabUtility.InstantiatePrefab(_selectedObject);
+                    sourceInstance.name = _selectedObject.name + "_TempInstance";
+                    ExportLogger.LogInfo(Localize.Get(
+                        $"Prefabアセットをシーンにロード: {_selectedObject.name}",
+                        $"Loaded prefab asset to scene: {_selectedObject.name}"));
+                }
+
+                var sourceRoot = isPrefabAsset ? sourceInstance : _selectedObject;
+
                 // 複製を作成
-                var cloned = Instantiate(_selectedObject);
+                var cloned = Instantiate(sourceRoot);
                 cloned.name = _selectedObject.name + "_Export";
+
+                // Avatarアセット参照を確実に維持
+                EnsureAvatarReference(sourceRoot, cloned);
 
                 try
                 {
@@ -268,7 +310,7 @@ namespace DSGarage.FBX4VRM.Editor.UI
                     ApplyPresetToProcessors(_selectedPreset);
 
                     // コンテキスト作成
-                    var context = new ExportContext(_selectedObject)
+                    var context = new ExportContext(sourceRoot)
                     {
                         ClonedRoot = cloned,
                         OutputPath = outputPath,
@@ -290,14 +332,16 @@ namespace DSGarage.FBX4VRM.Editor.UI
                         ReportManager.LogReport(report);
                         ReportManager.SaveReport(report);
 
-                        Debug.Log($"[FBX4VRM] Quick export completed: {outputPath}");
+                        // パイプライン完了ログ
+                        ExportLogger.LogPipelineComplete(true, outputPath);
 
                         // 成功通知
                         ShowExportSuccessDialog(outputPath, report);
                     }
                     else
                     {
-                        Debug.LogError($"[FBX4VRM] Quick export failed at {pipelineResult.StoppedAtProcessorId}");
+                        // パイプライン失敗ログ
+                        ExportLogger.LogPipelineComplete(false);
                         ExportReportWindow.Show(report);
                     }
                 }
@@ -308,6 +352,15 @@ namespace DSGarage.FBX4VRM.Editor.UI
             }
             finally
             {
+                // Prefab Assetから作成した一時インスタンスを削除
+                if (sourceInstance != null)
+                {
+                    DestroyImmediate(sourceInstance);
+                    ExportLogger.LogInfo(Localize.Get(
+                        "一時インスタンスを削除しました",
+                        "Temporary instance removed"));
+                }
+
                 _isExporting = false;
                 Repaint();
             }
@@ -386,6 +439,12 @@ namespace DSGarage.FBX4VRM.Editor.UI
                 var bytes = UniVRM10.Vrm10Exporter.Export(settings, root, vrmMeta: meta);
                 if (bytes != null)
                 {
+                    if (File.Exists(path))
+                    {
+                        ExportLogger.LogInfo(Localize.Get(
+                            $"既存ファイルを上書き: {path}",
+                            $"Overwriting existing file: {path}"));
+                    }
                     File.WriteAllBytes(path, bytes);
                 }
             }
@@ -400,6 +459,12 @@ namespace DSGarage.FBX4VRM.Editor.UI
                 if (data != null)
                 {
                     var bytes = data.ToGlbBytes();
+                    if (File.Exists(path))
+                    {
+                        ExportLogger.LogInfo(Localize.Get(
+                            $"既存ファイルを上書き: {path}",
+                            $"Overwriting existing file: {path}"));
+                    }
                     File.WriteAllBytes(path, bytes);
                 }
             }
@@ -450,25 +515,122 @@ namespace DSGarage.FBX4VRM.Editor.UI
         private (bool isValid, string message) ValidateObject(GameObject obj)
         {
             if (obj == null)
-                return (false, "No object selected");
-
-            if (!obj.scene.IsValid())
-                return (false, "Select a scene object, not a prefab asset");
+                return (false, Localize.Get("オブジェクトが選択されていません", "No object selected"));
 
             var animator = obj.GetComponent<Animator>();
             if (animator == null)
-                return (false, "No Animator component");
+                return (false, Localize.NoAnimator);
 
             if (animator.avatar == null || !animator.avatar.isHuman)
-                return (false, "Avatar is not Humanoid");
+                return (false, Localize.NotHumanoid);
 
-            return (true, "✓ Ready to export");
+            // Prefab Assetの場合は追加情報を表示
+            if (IsPrefabAsset(obj))
+            {
+                return (true, Localize.Get(
+                    "✓ Prefabアセット - エクスポート時に一時的にシーンへロードされます",
+                    "✓ Prefab Asset - Will be temporarily loaded to scene for export"));
+            }
+
+            return (true, Localize.ReadyToExport);
         }
 
         private bool IsValidVrmSource(GameObject obj)
         {
             var (isValid, _) = ValidateObject(obj);
             return isValid;
+        }
+
+        /// <summary>
+        /// オブジェクトがAssets内のPrefabかどうかを判定
+        /// </summary>
+        private bool IsPrefabAsset(GameObject obj)
+        {
+            if (obj == null) return false;
+            return !obj.scene.IsValid() && PrefabUtility.IsPartOfPrefabAsset(obj);
+        }
+
+        /// <summary>
+        /// クローンにAvatarアセット参照を確実にコピー
+        /// </summary>
+        private void EnsureAvatarReference(GameObject source, GameObject clone)
+        {
+            var sourceAnimator = source.GetComponent<Animator>();
+            var cloneAnimator = clone.GetComponent<Animator>();
+
+            if (sourceAnimator == null || cloneAnimator == null) return;
+
+            // Avatarが null または参照が切れている場合
+            if (cloneAnimator.avatar == null && sourceAnimator.avatar != null)
+            {
+                cloneAnimator.avatar = sourceAnimator.avatar;
+                ExportLogger.LogInfo(Localize.Get(
+                    $"Avatarアセットを明示的にコピー: {sourceAnimator.avatar.name}",
+                    $"Explicitly copied Avatar asset: {sourceAnimator.avatar.name}"));
+            }
+
+            // Prefabの場合、元のFBXからAvatarを取得を試みる
+            if (cloneAnimator.avatar == null)
+            {
+                var prefabPath = PrefabUtility.GetPrefabAssetPathOfNearestInstanceRoot(source);
+                if (!string.IsNullOrEmpty(prefabPath))
+                {
+                    // 依存アセットからAvatarを探す（FBXのサブアセット含む）
+                    var dependencies = AssetDatabase.GetDependencies(prefabPath, true);
+                    foreach (var dep in dependencies)
+                    {
+                        // FBXやモデルファイルの場合、サブアセットからAvatarを探す
+                        var allAssets = AssetDatabase.LoadAllAssetsAtPath(dep);
+                        foreach (var asset in allAssets)
+                        {
+                            if (asset is Avatar avatar && avatar.isHuman)
+                            {
+                                cloneAnimator.avatar = avatar;
+                                ExportLogger.LogInfo(Localize.Get(
+                                    $"FBXサブアセットからAvatarを検出: {avatar.name} ({dep})",
+                                    $"Found Avatar from FBX sub-asset: {avatar.name} ({dep})"));
+                                break;
+                            }
+                        }
+                        if (cloneAnimator.avatar != null) break;
+                    }
+                }
+            }
+
+            // 元のPrefabアセットから直接Avatarを探す
+            if (cloneAnimator.avatar == null && _selectedObject != null)
+            {
+                var assetPath = AssetDatabase.GetAssetPath(_selectedObject);
+                if (!string.IsNullOrEmpty(assetPath))
+                {
+                    var allAssets = AssetDatabase.LoadAllAssetsAtPath(assetPath);
+                    foreach (var asset in allAssets)
+                    {
+                        if (asset is Avatar avatar && avatar.isHuman)
+                        {
+                            cloneAnimator.avatar = avatar;
+                            ExportLogger.LogInfo(Localize.Get(
+                                $"PrefabアセットからAvatarを検出: {avatar.name}",
+                                $"Found Avatar from Prefab asset: {avatar.name}"));
+                            break;
+                        }
+                    }
+                }
+            }
+
+            // それでもAvatarがない場合は警告
+            if (cloneAnimator.avatar == null)
+            {
+                ExportLogger.LogWarning(Localize.Get(
+                    "Avatarアセットが見つかりません。Humanoid設定を確認してください。",
+                    "Avatar asset not found. Please check Humanoid settings."));
+            }
+            else
+            {
+                ExportLogger.LogInfo(Localize.Get(
+                    $"Avatar確認: {cloneAnimator.avatar.name} (isHuman: {cloneAnimator.avatar.isHuman})",
+                    $"Avatar confirmed: {cloneAnimator.avatar.name} (isHuman: {cloneAnimator.avatar.isHuman})"));
+            }
         }
     }
 }

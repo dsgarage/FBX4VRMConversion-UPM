@@ -1,0 +1,913 @@
+{
+    "SourceAssetPath": "Assets/Kyoko/Prefab/kyoko.prefab",
+    "OutputPath": "/Users/daisuketsukada/Documents/dsgarageUnity/FBX4VRMConversion/Assets/../VRM_Export/kyoko.vrm",
+    "PresetName": "",
+    "VrmVersion": 1,
+    "Success": true,
+    "StoppedAtProcessor": "",
+    "Notifications": [
+        {
+            "ProcessorId": "root_validation",
+            "Level": "Info",
+            "Message": "Root validation passed",
+            "Details": "Animator: kyoko_Export, Avatar: kyokoAvatar",
+            "Timestamp": "2025-11-27 12:08:49"
+        },
+        {
+            "ProcessorId": "root_validation",
+            "Level": "Info",
+            "Message": "Found 16 SkinnedMeshRenderers, 0 MeshFilters",
+            "Details": "",
+            "Timestamp": "2025-11-27 12:08:49"
+        },
+        {
+            "ProcessorId": "root_validation",
+            "Level": "Warning",
+            "Message": "No Vrm10Instance component found. Meta and Expression data may be missing.",
+            "Details": "Consider adding Vrm10Instance component for full VRM 1.0 support.",
+            "Timestamp": "2025-11-27 12:08:49"
+        },
+        {
+            "ProcessorId": "humanoid_validation",
+            "Level": "Info",
+            "Message": "All 15 required bones found",
+            "Details": "Hips, Spine, Head, LeftUpperArm, LeftLowerArm, LeftHand, RightUpperArm, RightLowerArm, RightHand, LeftUpperLeg, LeftLowerLeg, LeftFoot, RightUpperLeg, RightLowerLeg, RightFoot",
+            "Timestamp": "2025-11-27 12:08:49"
+        },
+        {
+            "ProcessorId": "humanoid_validation",
+            "Level": "Warning",
+            "Message": "Missing 1 recommended bone(s)",
+            "Details": "Missing: Jaw",
+            "Timestamp": "2025-11-27 12:08:49"
+        },
+        {
+            "ProcessorId": "humanoid_validation",
+            "Level": "Info",
+            "Message": "T-Pose check passed",
+            "Details": "",
+            "Timestamp": "2025-11-27 12:08:49"
+        },
+        {
+            "ProcessorId": "humanoid_validation",
+            "Level": "Info",
+            "Message": "Bone hierarchy check passed",
+            "Details": "",
+            "Timestamp": "2025-11-27 12:08:49"
+        },
+        {
+            "ProcessorId": "liltoon_detect",
+            "Level": "Info",
+            "Message": "Detected 11 lilToon material(s)",
+            "Details": "Materials: Body, Alpha, Hair, Cloth, Loungewear, lace1, Camisole, Lace2, pants, NailTip, swimwear\nVariants:\n  - With Outline: 4\n  - Transparent: 4\n  - Transparent, With Outline: 1\n  - Standard: 2",
+            "Timestamp": "2025-11-27 12:08:49"
+        },
+        {
+            "ProcessorId": "liltoon_to_mtoon_convert",
+            "Level": "Info",
+            "Message": "Converted 11 lilToon material(s) to MToon",
+            "Details": "Replaced 23 material slot(s) on renderers",
+            "Timestamp": "2025-11-27 12:08:49"
+        },
+        {
+            "ProcessorId": "gltf_value_clamp",
+            "Level": "Info",
+            "Message": "No values required clamping",
+            "Details": "",
+            "Timestamp": "2025-11-27 12:08:49"
+        },
+        {
+            "ProcessorId": "expressions_setup",
+            "Level": "Warning",
+            "Message": "Duplicate mapping for 'ih'",
+            "Details": "'vrc.blink_right' ignored, using 'vrc.blink_left'",
+            "Timestamp": "2025-11-27 12:08:49"
+        },
+        {
+            "ProcessorId": "expressions_setup",
+            "Level": "Warning",
+            "Message": "Duplicate mapping for 'ih'",
+            "Details": "'vrc.lowerlid_left' ignored, using 'vrc.blink_left'",
+            "Timestamp": "2025-11-27 12:08:49"
+        },
+        {
+            "ProcessorId": "expressions_setup",
+            "Level": "Warning",
+            "Message": "Duplicate mapping for 'ih'",
+            "Details": "'vrc.lowerlid_right' ignored, using 'vrc.blink_left'",
+            "Timestamp": "2025-11-27 12:08:49"
+        },
+        {
+            "ProcessorId": "expressions_setup",
+            "Level": "Warning",
+            "Message": "Duplicate mapping for 'ih'",
+            "Details": "'LookingUp' ignored, using 'vrc.blink_left'",
+            "Timestamp": "2025-11-27 12:08:49"
+        },
+        {
+            "ProcessorId": "expressions_setup",
+            "Level": "Warning",
+            "Message": "Duplicate mapping for 'ih'",
+            "Details": "'LookingDown' ignored, using 'vrc.blink_left'",
+            "Timestamp": "2025-11-27 12:08:49"
+        },
+        {
+            "ProcessorId": "expressions_setup",
+            "Level": "Warning",
+            "Message": "Duplicate mapping for 'ih'",
+            "Details": "'vrc.v_sil' ignored, using 'vrc.blink_left'",
+            "Timestamp": "2025-11-27 12:08:49"
+        },
+        {
+            "ProcessorId": "expressions_setup",
+            "Level": "Warning",
+            "Message": "Duplicate mapping for 'aa'",
+            "Details": "'vrc.v_aa' ignored, using '=====VRChat====='",
+            "Timestamp": "2025-11-27 12:08:49"
+        },
+        {
+            "ProcessorId": "expressions_setup",
+            "Level": "Warning",
+            "Message": "Duplicate mapping for 'ih'",
+            "Details": "'vrc.v_ih' ignored, using 'vrc.blink_left'",
+            "Timestamp": "2025-11-27 12:08:49"
+        },
+        {
+            "ProcessorId": "expressions_setup",
+            "Level": "Warning",
+            "Message": "Duplicate mapping for 'ee'",
+            "Details": "'=====Eye=====' ignored, using 'vrc.v_E'",
+            "Timestamp": "2025-11-27 12:08:49"
+        },
+        {
+            "ProcessorId": "expressions_setup",
+            "Level": "Warning",
+            "Message": "Duplicate mapping for 'ou'",
+            "Details": "'瞳うるうる' ignored, using 'vrc.v_ou'",
+            "Timestamp": "2025-11-27 12:08:49"
+        },
+        {
+            "ProcessorId": "expressions_setup",
+            "Level": "Warning",
+            "Message": "Duplicate mapping for 'ou'",
+            "Details": "'=====Mouth=====' ignored, using 'vrc.v_ou'",
+            "Timestamp": "2025-11-27 12:08:49"
+        },
+        {
+            "ProcessorId": "expressions_setup",
+            "Level": "Warning",
+            "Message": "Duplicate mapping for 'aa'",
+            "Details": "'あ' ignored, using '=====VRChat====='",
+            "Timestamp": "2025-11-27 12:08:49"
+        },
+        {
+            "ProcessorId": "expressions_setup",
+            "Level": "Warning",
+            "Message": "Duplicate mapping for 'ih'",
+            "Details": "'い' ignored, using 'vrc.blink_left'",
+            "Timestamp": "2025-11-27 12:08:49"
+        },
+        {
+            "ProcessorId": "expressions_setup",
+            "Level": "Warning",
+            "Message": "Duplicate mapping for 'ou'",
+            "Details": "'う' ignored, using 'vrc.v_ou'",
+            "Timestamp": "2025-11-27 12:08:49"
+        },
+        {
+            "ProcessorId": "expressions_setup",
+            "Level": "Warning",
+            "Message": "Duplicate mapping for 'ee'",
+            "Details": "'え' ignored, using 'vrc.v_E'",
+            "Timestamp": "2025-11-27 12:08:49"
+        },
+        {
+            "ProcessorId": "expressions_setup",
+            "Level": "Warning",
+            "Message": "Duplicate mapping for 'oh'",
+            "Details": "'お' ignored, using 'vrc.v_oh'",
+            "Timestamp": "2025-11-27 12:08:49"
+        },
+        {
+            "ProcessorId": "expressions_setup",
+            "Level": "Warning",
+            "Message": "Duplicate mapping for 'ih'",
+            "Details": "'いー' ignored, using 'vrc.blink_left'",
+            "Timestamp": "2025-11-27 12:08:49"
+        },
+        {
+            "ProcessorId": "expressions_setup",
+            "Level": "Warning",
+            "Message": "Duplicate mapping for 'ee'",
+            "Details": "'えー' ignored, using 'vrc.v_E'",
+            "Timestamp": "2025-11-27 12:08:49"
+        },
+        {
+            "ProcessorId": "expressions_setup",
+            "Level": "Warning",
+            "Message": "Duplicate mapping for 'oh'",
+            "Details": "'=====Brow=====' ignored, using 'vrc.v_oh'",
+            "Timestamp": "2025-11-27 12:08:49"
+        },
+        {
+            "ProcessorId": "expressions_setup",
+            "Level": "Warning",
+            "Message": "Duplicate mapping for 'angry'",
+            "Details": "'怒り_R' ignored, using '怒り_L'",
+            "Timestamp": "2025-11-27 12:08:49"
+        },
+        {
+            "ProcessorId": "expressions_setup",
+            "Level": "Warning",
+            "Message": "Duplicate mapping for 'angry'",
+            "Details": "'怒り' ignored, using '怒り_L'",
+            "Timestamp": "2025-11-27 12:08:49"
+        },
+        {
+            "ProcessorId": "expressions_setup",
+            "Level": "Warning",
+            "Message": "Duplicate mapping for 'sad'",
+            "Details": "'悲しい_R' ignored, using '悲しい_L'",
+            "Timestamp": "2025-11-27 12:08:49"
+        },
+        {
+            "ProcessorId": "expressions_setup",
+            "Level": "Warning",
+            "Message": "Duplicate mapping for 'sad'",
+            "Details": "'悲しい' ignored, using '悲しい_L'",
+            "Timestamp": "2025-11-27 12:08:49"
+        },
+        {
+            "ProcessorId": "expressions_setup",
+            "Level": "Warning",
+            "Message": "Duplicate mapping for 'angry'",
+            "Details": "'眉左怒り' ignored, using '怒り_L'",
+            "Timestamp": "2025-11-27 12:08:49"
+        },
+        {
+            "ProcessorId": "expressions_setup",
+            "Level": "Warning",
+            "Message": "Duplicate mapping for 'angry'",
+            "Details": "'眉右怒り' ignored, using '怒り_L'",
+            "Timestamp": "2025-11-27 12:08:49"
+        },
+        {
+            "ProcessorId": "expressions_setup",
+            "Level": "Warning",
+            "Message": "Duplicate mapping for 'ee'",
+            "Details": "'=====Other=====' ignored, using 'vrc.v_E'",
+            "Timestamp": "2025-11-27 12:08:49"
+        },
+        {
+            "ProcessorId": "expressions_setup",
+            "Level": "Warning",
+            "Message": "Duplicate mapping for 'aa'",
+            "Details": "'あご長' ignored, using '=====VRChat====='",
+            "Timestamp": "2025-11-27 12:08:49"
+        },
+        {
+            "ProcessorId": "expressions_setup",
+            "Level": "Warning",
+            "Message": "Duplicate mapping for 'aa'",
+            "Details": "'あご短' ignored, using '=====VRChat====='",
+            "Timestamp": "2025-11-27 12:08:49"
+        },
+        {
+            "ProcessorId": "expressions_setup",
+            "Level": "Warning",
+            "Message": "Duplicate mapping for 'ou'",
+            "Details": "'LookUp' ignored, using 'vrc.v_ou'",
+            "Timestamp": "2025-11-27 12:08:49"
+        },
+        {
+            "ProcessorId": "expressions_setup",
+            "Level": "Warning",
+            "Message": "Duplicate mapping for 'oh'",
+            "Details": "'LookDown' ignored, using 'vrc.v_oh'",
+            "Timestamp": "2025-11-27 12:08:49"
+        },
+        {
+            "ProcessorId": "expressions_setup",
+            "Level": "Warning",
+            "Message": "Duplicate mapping for 'ee'",
+            "Details": "'LookLeft' ignored, using 'vrc.v_E'",
+            "Timestamp": "2025-11-27 12:08:49"
+        },
+        {
+            "ProcessorId": "expressions_setup",
+            "Level": "Warning",
+            "Message": "Duplicate mapping for 'ih'",
+            "Details": "'LookRight' ignored, using 'vrc.blink_left'",
+            "Timestamp": "2025-11-27 12:08:49"
+        },
+        {
+            "ProcessorId": "expressions_setup",
+            "Level": "Warning",
+            "Message": "Duplicate mapping for 'ee'",
+            "Details": "'browDownLeft' ignored, using 'vrc.v_E'",
+            "Timestamp": "2025-11-27 12:08:49"
+        },
+        {
+            "ProcessorId": "expressions_setup",
+            "Level": "Warning",
+            "Message": "Duplicate mapping for 'ih'",
+            "Details": "'browDownRight' ignored, using 'vrc.blink_left'",
+            "Timestamp": "2025-11-27 12:08:49"
+        },
+        {
+            "ProcessorId": "expressions_setup",
+            "Level": "Warning",
+            "Message": "Duplicate mapping for 'ou'",
+            "Details": "'browOuterUpLeft' ignored, using 'vrc.v_ou'",
+            "Timestamp": "2025-11-27 12:08:49"
+        },
+        {
+            "ProcessorId": "expressions_setup",
+            "Level": "Warning",
+            "Message": "Duplicate mapping for 'ih'",
+            "Details": "'browOuterUpRight' ignored, using 'vrc.blink_left'",
+            "Timestamp": "2025-11-27 12:08:49"
+        },
+        {
+            "ProcessorId": "expressions_setup",
+            "Level": "Warning",
+            "Message": "Duplicate mapping for 'ih'",
+            "Details": "'eyeLookInLeft' ignored, using 'vrc.blink_left'",
+            "Timestamp": "2025-11-27 12:08:49"
+        },
+        {
+            "ProcessorId": "expressions_setup",
+            "Level": "Warning",
+            "Message": "Duplicate mapping for 'ih'",
+            "Details": "'eyeLookInRight' ignored, using 'vrc.blink_left'",
+            "Timestamp": "2025-11-27 12:08:49"
+        },
+        {
+            "ProcessorId": "expressions_setup",
+            "Level": "Warning",
+            "Message": "Duplicate mapping for 'ou'",
+            "Details": "'eyeLookOutLeft' ignored, using 'vrc.v_ou'",
+            "Timestamp": "2025-11-27 12:08:49"
+        },
+        {
+            "ProcessorId": "expressions_setup",
+            "Level": "Warning",
+            "Message": "Duplicate mapping for 'ih'",
+            "Details": "'eyeLookOutRight' ignored, using 'vrc.blink_left'",
+            "Timestamp": "2025-11-27 12:08:49"
+        },
+        {
+            "ProcessorId": "expressions_setup",
+            "Level": "Warning",
+            "Message": "Duplicate mapping for 'ou'",
+            "Details": "'eyeLookUpLeft' ignored, using 'vrc.v_ou'",
+            "Timestamp": "2025-11-27 12:08:49"
+        },
+        {
+            "ProcessorId": "expressions_setup",
+            "Level": "Warning",
+            "Message": "Duplicate mapping for 'ih'",
+            "Details": "'eyeLookUpRight' ignored, using 'vrc.blink_left'",
+            "Timestamp": "2025-11-27 12:08:49"
+        },
+        {
+            "ProcessorId": "expressions_setup",
+            "Level": "Warning",
+            "Message": "Duplicate mapping for 'ee'",
+            "Details": "'eyeLookDownLeft' ignored, using 'vrc.v_E'",
+            "Timestamp": "2025-11-27 12:08:49"
+        },
+        {
+            "ProcessorId": "expressions_setup",
+            "Level": "Warning",
+            "Message": "Duplicate mapping for 'ih'",
+            "Details": "'eyeLookDownRight' ignored, using 'vrc.blink_left'",
+            "Timestamp": "2025-11-27 12:08:49"
+        },
+        {
+            "ProcessorId": "expressions_setup",
+            "Level": "Warning",
+            "Message": "Duplicate mapping for 'ih'",
+            "Details": "'eyeWideLeft' ignored, using 'vrc.blink_left'",
+            "Timestamp": "2025-11-27 12:08:49"
+        },
+        {
+            "ProcessorId": "expressions_setup",
+            "Level": "Warning",
+            "Message": "Duplicate mapping for 'ih'",
+            "Details": "'eyeWideRight' ignored, using 'vrc.blink_left'",
+            "Timestamp": "2025-11-27 12:08:49"
+        },
+        {
+            "ProcessorId": "expressions_setup",
+            "Level": "Warning",
+            "Message": "Duplicate mapping for 'ih'",
+            "Details": "'eyeBlinkLeft' ignored, using 'vrc.blink_left'",
+            "Timestamp": "2025-11-27 12:08:49"
+        },
+        {
+            "ProcessorId": "expressions_setup",
+            "Level": "Warning",
+            "Message": "Duplicate mapping for 'ih'",
+            "Details": "'eyeBlinkRight' ignored, using 'vrc.blink_left'",
+            "Timestamp": "2025-11-27 12:08:49"
+        },
+        {
+            "ProcessorId": "expressions_setup",
+            "Level": "Warning",
+            "Message": "Duplicate mapping for 'ih'",
+            "Details": "'eyeSquintLeft' ignored, using 'vrc.blink_left'",
+            "Timestamp": "2025-11-27 12:08:49"
+        },
+        {
+            "ProcessorId": "expressions_setup",
+            "Level": "Warning",
+            "Message": "Duplicate mapping for 'ih'",
+            "Details": "'eyeSquintRight' ignored, using 'vrc.blink_left'",
+            "Timestamp": "2025-11-27 12:08:49"
+        },
+        {
+            "ProcessorId": "expressions_setup",
+            "Level": "Warning",
+            "Message": "Duplicate mapping for 'ou'",
+            "Details": "'cheekPuff' ignored, using 'vrc.v_ou'",
+            "Timestamp": "2025-11-27 12:08:49"
+        },
+        {
+            "ProcessorId": "expressions_setup",
+            "Level": "Warning",
+            "Message": "Duplicate mapping for 'ih'",
+            "Details": "'cheekSquintLeft' ignored, using 'vrc.blink_left'",
+            "Timestamp": "2025-11-27 12:08:49"
+        },
+        {
+            "ProcessorId": "expressions_setup",
+            "Level": "Warning",
+            "Message": "Duplicate mapping for 'ih'",
+            "Details": "'cheekSquintRight' ignored, using 'vrc.blink_left'",
+            "Timestamp": "2025-11-27 12:08:49"
+        },
+        {
+            "ProcessorId": "expressions_setup",
+            "Level": "Warning",
+            "Message": "Duplicate mapping for 'ee'",
+            "Details": "'noseSneerLeft' ignored, using 'vrc.v_E'",
+            "Timestamp": "2025-11-27 12:08:49"
+        },
+        {
+            "ProcessorId": "expressions_setup",
+            "Level": "Warning",
+            "Message": "Duplicate mapping for 'ih'",
+            "Details": "'noseSneerRight' ignored, using 'vrc.blink_left'",
+            "Timestamp": "2025-11-27 12:08:49"
+        },
+        {
+            "ProcessorId": "expressions_setup",
+            "Level": "Warning",
+            "Message": "Duplicate mapping for 'aa'",
+            "Details": "'jawOpen' ignored, using '=====VRChat====='",
+            "Timestamp": "2025-11-27 12:08:49"
+        },
+        {
+            "ProcessorId": "expressions_setup",
+            "Level": "Warning",
+            "Message": "Duplicate mapping for 'aa'",
+            "Details": "'jawForward' ignored, using '=====VRChat====='",
+            "Timestamp": "2025-11-27 12:08:49"
+        },
+        {
+            "ProcessorId": "expressions_setup",
+            "Level": "Warning",
+            "Message": "Duplicate mapping for 'aa'",
+            "Details": "'jawLeft' ignored, using '=====VRChat====='",
+            "Timestamp": "2025-11-27 12:08:49"
+        },
+        {
+            "ProcessorId": "expressions_setup",
+            "Level": "Warning",
+            "Message": "Duplicate mapping for 'aa'",
+            "Details": "'jawRight' ignored, using '=====VRChat====='",
+            "Timestamp": "2025-11-27 12:08:49"
+        },
+        {
+            "ProcessorId": "expressions_setup",
+            "Level": "Warning",
+            "Message": "Duplicate mapping for 'ou'",
+            "Details": "'mouthClose' ignored, using 'vrc.v_ou'",
+            "Timestamp": "2025-11-27 12:08:49"
+        },
+        {
+            "ProcessorId": "expressions_setup",
+            "Level": "Warning",
+            "Message": "Duplicate mapping for 'ou'",
+            "Details": "'mouthFunnel' ignored, using 'vrc.v_ou'",
+            "Timestamp": "2025-11-27 12:08:49"
+        },
+        {
+            "ProcessorId": "expressions_setup",
+            "Level": "Warning",
+            "Message": "Duplicate mapping for 'ou'",
+            "Details": "'mouthPucker' ignored, using 'vrc.v_ou'",
+            "Timestamp": "2025-11-27 12:08:49"
+        },
+        {
+            "ProcessorId": "expressions_setup",
+            "Level": "Warning",
+            "Message": "Duplicate mapping for 'ou'",
+            "Details": "'mouthLeft' ignored, using 'vrc.v_ou'",
+            "Timestamp": "2025-11-27 12:08:49"
+        },
+        {
+            "ProcessorId": "expressions_setup",
+            "Level": "Warning",
+            "Message": "Duplicate mapping for 'ih'",
+            "Details": "'mouthRight' ignored, using 'vrc.blink_left'",
+            "Timestamp": "2025-11-27 12:08:49"
+        },
+        {
+            "ProcessorId": "expressions_setup",
+            "Level": "Warning",
+            "Message": "Duplicate mapping for 'ou'",
+            "Details": "'mouthRollUpper' ignored, using 'vrc.v_ou'",
+            "Timestamp": "2025-11-27 12:08:49"
+        },
+        {
+            "ProcessorId": "expressions_setup",
+            "Level": "Warning",
+            "Message": "Duplicate mapping for 'ou'",
+            "Details": "'mouthRollLower' ignored, using 'vrc.v_ou'",
+            "Timestamp": "2025-11-27 12:08:49"
+        },
+        {
+            "ProcessorId": "expressions_setup",
+            "Level": "Warning",
+            "Message": "Duplicate mapping for 'ou'",
+            "Details": "'mouthShrugUpper' ignored, using 'vrc.v_ou'",
+            "Timestamp": "2025-11-27 12:08:49"
+        },
+        {
+            "ProcessorId": "expressions_setup",
+            "Level": "Warning",
+            "Message": "Duplicate mapping for 'ou'",
+            "Details": "'mouthShrugLower' ignored, using 'vrc.v_ou'",
+            "Timestamp": "2025-11-27 12:08:49"
+        },
+        {
+            "ProcessorId": "expressions_setup",
+            "Level": "Warning",
+            "Message": "Duplicate mapping for 'happy'",
+            "Details": "'mouthSmileLeft' ignored, using '笑い'",
+            "Timestamp": "2025-11-27 12:08:49"
+        },
+        {
+            "ProcessorId": "expressions_setup",
+            "Level": "Warning",
+            "Message": "Duplicate mapping for 'happy'",
+            "Details": "'mouthSmileRight' ignored, using '笑い'",
+            "Timestamp": "2025-11-27 12:08:49"
+        },
+        {
+            "ProcessorId": "expressions_setup",
+            "Level": "Warning",
+            "Message": "Duplicate mapping for 'ou'",
+            "Details": "'mouthFrownLeft' ignored, using 'vrc.v_ou'",
+            "Timestamp": "2025-11-27 12:08:49"
+        },
+        {
+            "ProcessorId": "expressions_setup",
+            "Level": "Warning",
+            "Message": "Duplicate mapping for 'ih'",
+            "Details": "'mouthFrownRight' ignored, using 'vrc.blink_left'",
+            "Timestamp": "2025-11-27 12:08:49"
+        },
+        {
+            "ProcessorId": "expressions_setup",
+            "Level": "Warning",
+            "Message": "Duplicate mapping for 'ih'",
+            "Details": "'mouthDimpleLeft' ignored, using 'vrc.blink_left'",
+            "Timestamp": "2025-11-27 12:08:49"
+        },
+        {
+            "ProcessorId": "expressions_setup",
+            "Level": "Warning",
+            "Message": "Duplicate mapping for 'ih'",
+            "Details": "'mouthDimpleRight' ignored, using 'vrc.blink_left'",
+            "Timestamp": "2025-11-27 12:08:49"
+        },
+        {
+            "ProcessorId": "expressions_setup",
+            "Level": "Warning",
+            "Message": "Duplicate mapping for 'ou'",
+            "Details": "'mouthUpperUpLeft' ignored, using 'vrc.v_ou'",
+            "Timestamp": "2025-11-27 12:08:49"
+        },
+        {
+            "ProcessorId": "expressions_setup",
+            "Level": "Warning",
+            "Message": "Duplicate mapping for 'ih'",
+            "Details": "'mouthUpperUpRight' ignored, using 'vrc.blink_left'",
+            "Timestamp": "2025-11-27 12:08:49"
+        },
+        {
+            "ProcessorId": "expressions_setup",
+            "Level": "Warning",
+            "Message": "Duplicate mapping for 'ou'",
+            "Details": "'mouthLowerDownLeft' ignored, using 'vrc.v_ou'",
+            "Timestamp": "2025-11-27 12:08:49"
+        },
+        {
+            "ProcessorId": "expressions_setup",
+            "Level": "Warning",
+            "Message": "Duplicate mapping for 'ih'",
+            "Details": "'mouthLowerDownRight' ignored, using 'vrc.blink_left'",
+            "Timestamp": "2025-11-27 12:08:49"
+        },
+        {
+            "ProcessorId": "expressions_setup",
+            "Level": "Warning",
+            "Message": "Duplicate mapping for 'ou'",
+            "Details": "'mouthPressLeft' ignored, using 'vrc.v_ou'",
+            "Timestamp": "2025-11-27 12:08:49"
+        },
+        {
+            "ProcessorId": "expressions_setup",
+            "Level": "Warning",
+            "Message": "Duplicate mapping for 'ih'",
+            "Details": "'mouthPressRight' ignored, using 'vrc.blink_left'",
+            "Timestamp": "2025-11-27 12:08:49"
+        },
+        {
+            "ProcessorId": "expressions_setup",
+            "Level": "Warning",
+            "Message": "Duplicate mapping for 'ou'",
+            "Details": "'mouthStretchLeft' ignored, using 'vrc.v_ou'",
+            "Timestamp": "2025-11-27 12:08:49"
+        },
+        {
+            "ProcessorId": "expressions_setup",
+            "Level": "Warning",
+            "Message": "Duplicate mapping for 'ih'",
+            "Details": "'mouthStretchRight' ignored, using 'vrc.blink_left'",
+            "Timestamp": "2025-11-27 12:08:49"
+        },
+        {
+            "ProcessorId": "expressions_setup",
+            "Level": "Warning",
+            "Message": "Duplicate mapping for 'ou'",
+            "Details": "'tongueOut' ignored, using 'vrc.v_ou'",
+            "Timestamp": "2025-11-27 12:08:49"
+        },
+        {
+            "ProcessorId": "expressions_setup",
+            "Level": "Warning",
+            "Message": "Duplicate mapping for 'aa'",
+            "Details": "'HairShadow' ignored, using '=====VRChat====='",
+            "Timestamp": "2025-11-27 12:08:49"
+        },
+        {
+            "ProcessorId": "expressions_setup",
+            "Level": "Warning",
+            "Message": "Duplicate mapping for 'ih'",
+            "Details": "'Tie' ignored, using 'vrc.blink_left'",
+            "Timestamp": "2025-11-27 12:08:49"
+        },
+        {
+            "ProcessorId": "expressions_setup",
+            "Level": "Warning",
+            "Message": "Duplicate mapping for 'aa'",
+            "Details": "'TieAccessories' ignored, using '=====VRChat====='",
+            "Timestamp": "2025-11-27 12:08:49"
+        },
+        {
+            "ProcessorId": "expressions_setup",
+            "Level": "Warning",
+            "Message": "Duplicate mapping for 'aa'",
+            "Details": "'干渉防止_Upper Arm' ignored, using '=====VRChat====='",
+            "Timestamp": "2025-11-27 12:08:49"
+        },
+        {
+            "ProcessorId": "expressions_setup",
+            "Level": "Warning",
+            "Message": "Duplicate mapping for 'aa'",
+            "Details": "'干渉防止_Lower Arm' ignored, using '=====VRChat====='",
+            "Timestamp": "2025-11-27 12:08:49"
+        },
+        {
+            "ProcessorId": "expressions_setup",
+            "Level": "Warning",
+            "Message": "Duplicate mapping for 'ee'",
+            "Details": "'干渉防止_Chest' ignored, using 'vrc.v_E'",
+            "Timestamp": "2025-11-27 12:08:49"
+        },
+        {
+            "ProcessorId": "expressions_setup",
+            "Level": "Warning",
+            "Message": "Duplicate mapping for 'ih'",
+            "Details": "'干渉防止_Spine' ignored, using 'vrc.blink_left'",
+            "Timestamp": "2025-11-27 12:08:49"
+        },
+        {
+            "ProcessorId": "expressions_setup",
+            "Level": "Warning",
+            "Message": "Duplicate mapping for 'ih'",
+            "Details": "'干渉防止_Hip' ignored, using 'vrc.blink_left'",
+            "Timestamp": "2025-11-27 12:08:49"
+        },
+        {
+            "ProcessorId": "expressions_setup",
+            "Level": "Warning",
+            "Message": "Duplicate mapping for 'ou'",
+            "Details": "'干渉防止_Upper Leg' ignored, using 'vrc.v_ou'",
+            "Timestamp": "2025-11-27 12:08:49"
+        },
+        {
+            "ProcessorId": "expressions_setup",
+            "Level": "Warning",
+            "Message": "Duplicate mapping for 'ee'",
+            "Details": "'干渉防止_Lower Leg' ignored, using 'vrc.v_E'",
+            "Timestamp": "2025-11-27 12:08:49"
+        },
+        {
+            "ProcessorId": "expressions_setup",
+            "Level": "Warning",
+            "Message": "Duplicate mapping for 'oh'",
+            "Details": "'干渉防止_Foot' ignored, using 'vrc.v_oh'",
+            "Timestamp": "2025-11-27 12:08:49"
+        },
+        {
+            "ProcessorId": "expressions_setup",
+            "Level": "Warning",
+            "Message": "Duplicate mapping for 'ih'",
+            "Details": "'T-shirt' ignored, using 'vrc.blink_left'",
+            "Timestamp": "2025-11-27 12:08:49"
+        },
+        {
+            "ProcessorId": "expressions_setup",
+            "Level": "Warning",
+            "Message": "Duplicate mapping for 'oh'",
+            "Details": "'Shorts' ignored, using 'vrc.v_oh'",
+            "Timestamp": "2025-11-27 12:08:49"
+        },
+        {
+            "ProcessorId": "expressions_setup",
+            "Level": "Warning",
+            "Message": "Duplicate mapping for 'ih'",
+            "Details": "'Slipper' ignored, using 'vrc.blink_left'",
+            "Timestamp": "2025-11-27 12:08:49"
+        },
+        {
+            "ProcessorId": "expressions_setup",
+            "Level": "Warning",
+            "Message": "Duplicate mapping for 'aa'",
+            "Details": "'肉感A' ignored, using '=====VRChat====='",
+            "Timestamp": "2025-11-27 12:08:49"
+        },
+        {
+            "ProcessorId": "expressions_setup",
+            "Level": "Warning",
+            "Message": "Duplicate mapping for 'aa'",
+            "Details": "'Bra' ignored, using '=====VRChat====='",
+            "Timestamp": "2025-11-27 12:08:49"
+        },
+        {
+            "ProcessorId": "expressions_setup",
+            "Level": "Warning",
+            "Message": "Duplicate mapping for 'aa'",
+            "Details": "'Pants' ignored, using '=====VRChat====='",
+            "Timestamp": "2025-11-27 12:08:49"
+        },
+        {
+            "ProcessorId": "expressions_setup",
+            "Level": "Warning",
+            "Message": "Duplicate mapping for 'ih'",
+            "Details": "'長い' ignored, using 'vrc.blink_left'",
+            "Timestamp": "2025-11-27 12:08:49"
+        },
+        {
+            "ProcessorId": "expressions_setup",
+            "Level": "Warning",
+            "Message": "Duplicate mapping for 'ih'",
+            "Details": "'短い' ignored, using 'vrc.blink_left'",
+            "Timestamp": "2025-11-27 12:08:49"
+        },
+        {
+            "ProcessorId": "expressions_setup",
+            "Level": "Warning",
+            "Message": "Duplicate mapping for 'aa'",
+            "Details": "'Eyemask' ignored, using '=====VRChat====='",
+            "Timestamp": "2025-11-27 12:08:49"
+        },
+        {
+            "ProcessorId": "expressions_setup",
+            "Level": "Warning",
+            "Message": "Duplicate mapping for 'ou'",
+            "Details": "'Chouchou' ignored, using 'vrc.v_ou'",
+            "Timestamp": "2025-11-27 12:08:49"
+        },
+        {
+            "ProcessorId": "expressions_setup",
+            "Level": "Warning",
+            "Message": "Duplicate mapping for 'aa'",
+            "Details": "'Pants' ignored, using '=====VRChat====='",
+            "Timestamp": "2025-11-27 12:08:49"
+        },
+        {
+            "ProcessorId": "expressions_setup",
+            "Level": "Warning",
+            "Message": "Duplicate mapping for 'ih'",
+            "Details": "'Ribbon' ignored, using 'vrc.blink_left'",
+            "Timestamp": "2025-11-27 12:08:49"
+        },
+        {
+            "ProcessorId": "expressions_setup",
+            "Level": "Warning",
+            "Message": "Duplicate mapping for 'aa'",
+            "Details": "'Babydoll' ignored, using '=====VRChat====='",
+            "Timestamp": "2025-11-27 12:08:49"
+        },
+        {
+            "ProcessorId": "expressions_setup",
+            "Level": "Warning",
+            "Message": "Duplicate mapping for 'aa'",
+            "Details": "'Bra' ignored, using '=====VRChat====='",
+            "Timestamp": "2025-11-27 12:08:49"
+        },
+        {
+            "ProcessorId": "expressions_setup",
+            "Level": "Warning",
+            "Message": "Duplicate mapping for 'aa'",
+            "Details": "'Pants' ignored, using '=====VRChat====='",
+            "Timestamp": "2025-11-27 12:08:49"
+        },
+        {
+            "ProcessorId": "expressions_setup",
+            "Level": "Warning",
+            "Message": "Duplicate mapping for 'aa'",
+            "Details": "'A' ignored, using '=====VRChat====='",
+            "Timestamp": "2025-11-27 12:08:49"
+        },
+        {
+            "ProcessorId": "expressions_setup",
+            "Level": "Warning",
+            "Message": "Duplicate mapping for 'aa'",
+            "Details": "'肉感A' ignored, using '=====VRChat====='",
+            "Timestamp": "2025-11-27 12:08:49"
+        },
+        {
+            "ProcessorId": "expressions_setup",
+            "Level": "Warning",
+            "Message": "Duplicate mapping for 'aa'",
+            "Details": "'Bra' ignored, using '=====VRChat====='",
+            "Timestamp": "2025-11-27 12:08:49"
+        },
+        {
+            "ProcessorId": "expressions_setup",
+            "Level": "Warning",
+            "Message": "Duplicate mapping for 'aa'",
+            "Details": "'Pants' ignored, using '=====VRChat====='",
+            "Timestamp": "2025-11-27 12:08:49"
+        },
+        {
+            "ProcessorId": "expressions_setup",
+            "Level": "Warning",
+            "Message": "Duplicate mapping for 'aa'",
+            "Details": "'Garterbelt' ignored, using '=====VRChat====='",
+            "Timestamp": "2025-11-27 12:08:49"
+        },
+        {
+            "ProcessorId": "expressions_setup",
+            "Level": "Info",
+            "Message": "Found 306 BlendShape(s) in 16 mesh(es)",
+            "Details": "",
+            "Timestamp": "2025-11-27 12:08:49"
+        },
+        {
+            "ProcessorId": "expressions_setup",
+            "Level": "Info",
+            "Message": "Mapped 10 expression(s)",
+            "Details": "  aa: =====VRChat=====\n  ih: vrc.blink_left\n  ee: vrc.v_E\n  oh: vrc.v_oh\n  ou: vrc.v_ou\n  blink: まばたき\n  happy: 笑い\n  surprised: びっくり\n  angry: 怒り_L\n  sad: 悲しい_L",
+            "Timestamp": "2025-11-27 12:08:49"
+        },
+        {
+            "ProcessorId": "expressions_setup",
+            "Level": "Info",
+            "Message": "182 BlendShape(s) not mapped to VRM expressions",
+            "Details": "vrc.v_PP, vrc.v_FF, vrc.v_TH, vrc.v_DD, vrc.v_kk, vrc.v_CH, vrc.v_SS, vrc.v_nn, vrc.v_RR, ウィンク２右 (+172 more)",
+            "Timestamp": "2025-11-27 12:08:49"
+        },
+        {
+            "ProcessorId": "expressions_setup",
+            "Level": "Info",
+            "Message": "All recommended expressions found",
+            "Details": "",
+            "Timestamp": "2025-11-27 12:08:49"
+        },
+        {
+            "ProcessorId": "springbone_convert",
+            "Level": "Info",
+            "Message": "No dynamics bones detected",
+            "Details": "",
+            "Timestamp": "2025-11-27 12:08:49"
+        }
+    ]
+}

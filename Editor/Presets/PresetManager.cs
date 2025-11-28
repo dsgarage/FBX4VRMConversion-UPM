@@ -166,23 +166,34 @@ namespace DSGarage.FBX4VRM.Editor.Presets
 
         /// <summary>
         /// デフォルトプリセットを取得または作成
+        /// VRChatプリセットを優先、なければDefaultを作成
         /// </summary>
         public static ExportPreset GetOrCreateDefaultPreset()
         {
             var presets = GetAllPresets();
-            var defaultPreset = presets.FirstOrDefault(p => p.presetName == "Default");
 
+            // VRChatプリセットを優先的に探す
+            var vrchatPreset = presets.FirstOrDefault(p => p.presetName == "VRChat");
+            if (vrchatPreset != null)
+            {
+                return vrchatPreset;
+            }
+
+            // 次にDefaultプリセットを探す
+            var defaultPreset = presets.FirstOrDefault(p => p.presetName == "Default");
             if (defaultPreset != null)
             {
                 return defaultPreset;
             }
 
-            // デフォルトプリセット作成
+            // VRChat用デフォルトプリセット作成
             var preset = ScriptableObject.CreateInstance<ExportPreset>();
-            preset.presetName = "Default";
-            preset.description = "Default export settings";
-            preset.vrmVersion = 1;
+            preset.presetName = "VRChat";
+            preset.description = "Optimized settings for VRChat avatars (VRM 0.x)";
+            preset.tags = new[] { "VRChat", "Social VR" };
+            preset.vrmVersion = 0;
             preset.outputFolder = "VRM_Export";
+            preset.enableSpringBoneConversion = true;
 
             return SavePreset(preset);
         }
@@ -221,15 +232,15 @@ namespace DSGarage.FBX4VRM.Editor.Presets
             // Cluster用プリセット
             var clusterPreset = ScriptableObject.CreateInstance<ExportPreset>();
             clusterPreset.presetName = "Cluster";
-            clusterPreset.description = "Optimized settings for Cluster avatars";
+            clusterPreset.description = "Optimized settings for Cluster avatars (VRM 1.0 - Avatar構築にバグあり)";
             clusterPreset.tags = new[] { "Cluster", "Social VR" };
             clusterPreset.vrmVersion = 1; // Cluster supports VRM 1.0
             AssetDatabase.CreateAsset(clusterPreset, $"{folder}/Cluster.asset");
 
             // Generic VRM 1.0プリセット
             var vrm10Preset = ScriptableObject.CreateInstance<ExportPreset>();
-            vrm10Preset.presetName = "VRM 1.0 Standard";
-            vrm10Preset.description = "Standard VRM 1.0 export settings";
+            vrm10Preset.presetName = "VRM 1.0 Standard (Avatar構築にバグあり)";
+            vrm10Preset.description = "Standard VRM 1.0 export settings - Avatar構築にバグがあります";
             vrm10Preset.tags = new[] { "VRM 1.0", "Standard" };
             vrm10Preset.vrmVersion = 1;
             AssetDatabase.CreateAsset(vrm10Preset, $"{folder}/VRM10_Standard.asset");

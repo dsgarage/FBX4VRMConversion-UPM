@@ -23,8 +23,8 @@ namespace DSGarage.FBX4VRM.Editor.Presets
         public string[] tags = new string[0];
 
         [Header("Export Settings")]
-        [Tooltip("VRMバージョン: 0 = VRM 0.x, 1 = VRM 1.0")]
-        public int vrmVersion = 1;
+        [Tooltip("VRMバージョン: 0 = VRM 0.x, 1 = VRM 1.0 (Avatar構築にバグあり)")]
+        public int vrmVersion = 0;
 
         [Tooltip("出力フォルダパス（相対または絶対）")]
         public string outputFolder = "VRM_Export";

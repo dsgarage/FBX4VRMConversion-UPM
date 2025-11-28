@@ -5,7 +5,20 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
-## [0.1.0] - In Development
+## [0.1.1] - 2025-11-28
+
+### Changed
+- Default VRM version changed to 0.x (VRM 1.0 has Avatar construction bug)
+- Default preset changed to VRChat
+- VRM 1.0 option now shows warning about Avatar construction bug
+
+### Fixed
+- VRM export now overwrites existing files without confirmation dialog
+- Added overwrite logging for transparency
+
+---
+
+## [0.1.0] - 2025-11-28
 
 ### Phase 4: UX Polish
 - Preset Management System

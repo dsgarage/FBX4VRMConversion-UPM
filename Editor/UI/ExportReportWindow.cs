@@ -1,6 +1,7 @@
 using System.Linq;
 using UnityEditor;
 using UnityEngine;
+using DSGarage.FBX4VRM.Editor.Localization;
 using DSGarage.FBX4VRM.Editor.Processors;
 using DSGarage.FBX4VRM.Editor.Reports;
 
@@ -29,7 +30,7 @@ namespace DSGarage.FBX4VRM.Editor.UI
         public static void Show(ExportReport report)
         {
             var window = GetWindow<ExportReportWindow>();
-            window.titleContent = new GUIContent("Export Report");
+            window.titleContent = new GUIContent(Localize.Get("エクスポートレポート", "Export Report"));
             window._report = report;
             window.minSize = new Vector2(500, 400);
             window.Show();
@@ -71,7 +72,7 @@ namespace DSGarage.FBX4VRM.Editor.UI
 
             if (_report == null)
             {
-                EditorGUILayout.HelpBox("No report data.", MessageType.Info);
+                EditorGUILayout.HelpBox(Localize.Get("レポートデータがありません", "No report data."), MessageType.Info);
                 return;
             }
 
@@ -96,35 +97,35 @@ namespace DSGarage.FBX4VRM.Editor.UI
 
         private void DrawHeader()
         {
-            EditorGUILayout.LabelField("FBX4VRM Export Report", _headerStyle);
-            EditorGUILayout.LabelField($"Export Time: {_report.ExportTime:yyyy-MM-dd HH:mm:ss}");
+            EditorGUILayout.LabelField(Localize.Get("FBX4VRM エクスポートレポート", "FBX4VRM Export Report"), _headerStyle);
+            EditorGUILayout.LabelField($"{Localize.Get("エクスポート時刻", "Export Time")}: {_report.ExportTime:yyyy-MM-dd HH:mm:ss}");
         }
 
         private void DrawSummary()
         {
             using (new EditorGUILayout.VerticalScope(EditorStyles.helpBox))
             {
-                EditorGUILayout.LabelField("Summary", EditorStyles.boldLabel);
+                EditorGUILayout.LabelField(Localize.Get("サマリー", "Summary"), EditorStyles.boldLabel);
 
                 // 成功/失敗
                 if (_report.Success)
                 {
-                    EditorGUILayout.LabelField("Status: SUCCESS", _successStyle);
+                    EditorGUILayout.LabelField($"{Localize.Get("状態", "Status")}: {Localize.Success}", _successStyle);
                 }
                 else
                 {
-                    EditorGUILayout.LabelField($"Status: FAILED at {_report.StoppedAtProcessor}", _failStyle);
+                    EditorGUILayout.LabelField($"{Localize.Get("状態", "Status")}: {Localize.Failed} ({_report.StoppedAtProcessor})", _failStyle);
                 }
 
                 EditorGUILayout.Space(5);
 
                 // ファイル情報
-                EditorGUILayout.LabelField($"Source: {_report.SourceAssetPath}");
-                EditorGUILayout.LabelField($"Output: {_report.OutputPath}");
-                EditorGUILayout.LabelField($"VRM Version: {(_report.VrmVersion == 1 ? "1.0" : "0.x")}");
+                EditorGUILayout.LabelField($"{Localize.Get("ソース", "Source")}: {_report.SourceAssetPath}");
+                EditorGUILayout.LabelField($"{Localize.Get("出力先", "Output")}: {_report.OutputPath}");
+                EditorGUILayout.LabelField($"{Localize.VrmVersion}: {(_report.VrmVersion == 1 ? "1.0" : "0.x")}");
                 if (!string.IsNullOrEmpty(_report.PresetName))
                 {
-                    EditorGUILayout.LabelField($"Preset: {_report.PresetName}");
+                    EditorGUILayout.LabelField($"{Localize.Get("プリセット", "Preset")}: {_report.PresetName}");
                 }
 
                 EditorGUILayout.Space(5);
@@ -136,9 +137,9 @@ namespace DSGarage.FBX4VRM.Editor.UI
 
                 using (new EditorGUILayout.HorizontalScope())
                 {
-                    EditorGUILayout.LabelField($"Info: {infoCount}", GUILayout.Width(80));
-                    EditorGUILayout.LabelField($"Warning: {warningCount}", GUILayout.Width(100));
-                    EditorGUILayout.LabelField($"Error: {errorCount}", GUILayout.Width(80));
+                    EditorGUILayout.LabelField($"{Localize.Info}: {infoCount}", GUILayout.Width(80));
+                    EditorGUILayout.LabelField($"{Localize.Warning}: {warningCount}", GUILayout.Width(100));
+                    EditorGUILayout.LabelField($"{Localize.Error}: {errorCount}", GUILayout.Width(80));
                 }
             }
         }
@@ -147,16 +148,16 @@ namespace DSGarage.FBX4VRM.Editor.UI
         {
             using (new EditorGUILayout.HorizontalScope())
             {
-                EditorGUILayout.LabelField("Filter:", GUILayout.Width(40));
-                _showInfos = GUILayout.Toggle(_showInfos, "Info", "Button", GUILayout.Width(60));
-                _showWarnings = GUILayout.Toggle(_showWarnings, "Warning", "Button", GUILayout.Width(70));
-                _showErrors = GUILayout.Toggle(_showErrors, "Error", "Button", GUILayout.Width(60));
+                EditorGUILayout.LabelField(Localize.Get("フィルター:", "Filter:"), GUILayout.Width(60));
+                _showInfos = GUILayout.Toggle(_showInfos, Localize.Info, "Button", GUILayout.Width(60));
+                _showWarnings = GUILayout.Toggle(_showWarnings, Localize.Warning, "Button", GUILayout.Width(70));
+                _showErrors = GUILayout.Toggle(_showErrors, Localize.Error, "Button", GUILayout.Width(60));
             }
         }
 
         private void DrawNotifications()
         {
-            EditorGUILayout.LabelField("Notifications", EditorStyles.boldLabel);
+            EditorGUILayout.LabelField(Localize.Get("通知", "Notifications"), EditorStyles.boldLabel);
 
             var filteredNotifications = _report.Notifications.Where(n =>
                 (n.Level == "Info" && _showInfos) ||
@@ -166,7 +167,7 @@ namespace DSGarage.FBX4VRM.Editor.UI
 
             if (filteredNotifications.Count == 0)
             {
-                EditorGUILayout.HelpBox("No notifications to display.", MessageType.Info);
+                EditorGUILayout.HelpBox(Localize.Get("表示する通知がありません", "No notifications to display."), MessageType.Info);
                 return;
             }
 
@@ -225,19 +226,19 @@ namespace DSGarage.FBX4VRM.Editor.UI
         {
             using (new EditorGUILayout.HorizontalScope())
             {
-                if (GUILayout.Button("Save Report as JSON", GUILayout.Height(30)))
+                if (GUILayout.Button(Localize.SaveReport, GUILayout.Height(30)))
                 {
                     SaveReportAsJson();
                 }
 
-                if (GUILayout.Button("Copy to Clipboard", GUILayout.Height(30)))
+                if (GUILayout.Button(Localize.CopyToClipboard, GUILayout.Height(30)))
                 {
                     CopyToClipboard();
                 }
 
                 if (_report.Success && !string.IsNullOrEmpty(_report.OutputPath))
                 {
-                    if (GUILayout.Button("Show in Finder", GUILayout.Height(30)))
+                    if (GUILayout.Button(Localize.ShowInFinder, GUILayout.Height(30)))
                     {
                         EditorUtility.RevealInFinder(_report.OutputPath);
                     }
