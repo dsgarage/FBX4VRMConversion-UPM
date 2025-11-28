@@ -1,6 +1,7 @@
 using System.Collections.Generic;
 using System.Linq;
 using UnityEngine;
+using DSGarage.FBX4VRM.Editor.Logging;
 
 namespace DSGarage.FBX4VRM.Editor.Processors
 {
@@ -48,19 +49,24 @@ namespace DSGarage.FBX4VRM.Editor.Processors
         public PipelineResult Execute(ExportContext context)
         {
             var pipelineResult = new PipelineResult();
-            var orderedProcessors = _processors.Where(p => p.Enabled).OrderBy(p => p.Order);
+            var orderedProcessors = _processors.Where(p => p.Enabled).OrderBy(p => p.Order).ToList();
+
+            // パイプライン開始ログ
+            var rootName = context.SourceRoot != null ? context.SourceRoot.name : "Unknown";
+            ExportLogger.LogPipelineStart(rootName);
 
             foreach (var processor in orderedProcessors)
             {
-                Debug.Log($"[FBX4VRM] Executing processor: {processor.DisplayName}");
+                ExportLogger.LogProcessorStart(processor.DisplayName, processor.Order);
 
                 var result = processor.Execute(context);
                 context.MergeResult(result);
                 pipelineResult.ProcessorResults[processor.Id] = result;
 
+                ExportLogger.LogProcessorComplete(processor.DisplayName, result);
+
                 if (!result.CanContinue)
                 {
-                    Debug.LogError($"[FBX4VRM] Pipeline stopped at {processor.DisplayName} due to error");
                     pipelineResult.Success = false;
                     pipelineResult.StoppedAtProcessorId = processor.Id;
                     break;
@@ -83,23 +89,28 @@ namespace DSGarage.FBX4VRM.Editor.Processors
             // Phase 0: Root検証
             AddProcessor(new RootValidationProcessor());
 
-            // Phase 2: Humanoid検証（Root検証の直後）
+            // Phase 1: ポーズフリーズ（Transform正規化）- Root検証直後
+            AddProcessor(new PoseFreezeProcessor());
+
+            // Phase 2: ボーン回転正規化（VRM 1.0専用）- PoseFreezeの後
+            AddProcessor(new BoneOrientationNormalizerProcessor());
+
+            // Phase 3: Humanoid検証
             AddProcessor(new HumanoidValidationProcessor());
 
-            // Phase 1: lilToonサポート
+            // Phase 4: lilToonサポート
             AddProcessor(new LilToonDetectProcessor());
             AddProcessor(new LilToonToMToonProcessor());
 
-            // Phase 2: glTF値クランプ（lilToon変換の後）
+            // Phase 5: glTF値クランプ（lilToon変換の後）
             AddProcessor(new GltfValueClampProcessor());
 
-            // Phase 3: Expression/Dynamics
+            // Phase 6: Expression/Dynamics
             AddProcessor(new ExpressionsSetupProcessor());
             AddProcessor(new SpringBoneConvertProcessor());
 
-            // Phase 4以降で追加予定:
+            // 今後追加予定:
             // AddProcessor(new MetaPresetApplyProcessor());
-            // AddProcessor(new PoseFreezeProcessor());
         }
     }
 
