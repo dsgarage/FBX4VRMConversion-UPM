@@ -113,3 +113,6 @@ ProjectSettings/
 Assets/
 Packages/
 *.inputactions
+
+# VRM Export output
+VRM_Export/
