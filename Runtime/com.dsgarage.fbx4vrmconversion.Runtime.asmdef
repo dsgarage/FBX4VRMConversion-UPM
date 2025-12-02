@@ -1,0 +1,17 @@
+{
+  "name": "com.dsgarage.fbx4vrmconversion.Runtime",
+  "rootNamespace": "DSGarage.FBX4VRM",
+  "references": [
+    "VRM",
+    "UniGLTF"
+  ],
+  "includePlatforms": [],
+  "excludePlatforms": [],
+  "allowUnsafeCode": false,
+  "overrideReferences": false,
+  "precompiledReferences": [],
+  "autoReferenced": true,
+  "defineConstraints": [],
+  "versionDefines": [],
+  "noEngineReferences": false
+}

@@ -1,0 +1,50 @@
+{
+  "name": "com.dsgarage.fbx4vrmconversion",
+  "version": "0.0.1",
+  "displayName": "FBX4VRM Conversion",
+  "description": "Unity Editor Extension for converting FBX/Prefab to VRM format with lilToon support, notification system, and preset management.",
+  "unity": "2021.3",
+  "unityRelease": "0f1",
+  "documentationUrl": "https://github.com/dsgarage/FBX4VRMConversion-UPM",
+  "changelogUrl": "https://github.com/dsgarage/FBX4VRMConversion-UPM/blob/main/CHANGELOG.md",
+  "licensesUrl": "https://github.com/dsgarage/FBX4VRMConversion-UPM/blob/main/LICENSE",
+  "dependencies": {
+    "com.vrmc.gltf": "https://github.com/dsgarage/UniVRM-fork.git?path=/Packages/UniGLTF#v0.130.1-f2",
+    "com.vrmc.univrm": "https://github.com/dsgarage/UniVRM-fork.git?path=/Packages/VRM#v0.130.1-f2",
+    "com.vrmc.vrm": "https://github.com/dsgarage/UniVRM-fork.git?path=/Packages/VRM10#v0.130.1-f2"
+  },
+  "vrmCompatibility": {
+    "minVersion": "v0.130.1-f2",
+    "notes": "Requires UniVRM-fork with export hook support"
+  },
+  "keywords": [
+    "vrm",
+    "fbx",
+    "conversion",
+    "avatar",
+    "liltoon",
+    "mtoon",
+    "editor"
+  ],
+  "author": {
+    "name": "dsgarage",
+    "email": "dsgarage@gmail.com",
+    "url": "https://github.com/dsgarage"
+  },
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/dsgarage/FBX4VRMConversion-UPM.git"
+  },
+  "samples": [
+    {
+      "displayName": "Sample Presets",
+      "description": "Example conversion presets for common use cases",
+      "path": "Samples~/Presets"
+    },
+    {
+      "displayName": "Bone Check",
+      "description": "Bone verification tools using UnityChan animations",
+      "path": "Samples~/BoneCheck"
+    }
+  ]
+}
