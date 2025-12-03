@@ -116,3 +116,12 @@ Packages/
 
 # VRM Export output
 VRM_Export/
+
+# Build output
+Build/
+
+# Internal documentation (contains server URLs)
+Docs/
+
+# Local bug reports (contains local paths)
+FBX4VRM_Reports/

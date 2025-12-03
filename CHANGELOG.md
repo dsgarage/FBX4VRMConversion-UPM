@@ -5,6 +5,43 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [0.2.0] - 2025-12-01
+
+### Added
+- Bug Report System
+  - Multi-angle screenshot capture (10 directions: Front, Back, Left, Right, Top, Bottom + 4 diagonals)
+  - Automatic model information collection (skeleton, meshes, materials, dynamics)
+  - Server submission with screenshot embedding in GitHub Issues
+  - Bug Report button in Export Report Window
+- Platform & Avatar Management
+  - Platform identification (FBX4VRM, VRMLoader, ARApp)
+  - Avatar-based issue grouping
+  - Avatar list API integration
+  - Auto-match avatars by model name
+  - Avatar selection UI in Bug Report Window
+- Bone Check Window (`Tools > FBX4VRM > Bone Check Window`)
+  - Apply UnityChan AnimatorController to verify bone functionality
+  - Support for Locomotions, ActionCheck, and ARPose animations
+  - Required/Recommended bone status display
+  - Custom AnimatorController support
+  - Bone Check button in Export Report Window
+  - VRM import and instant bone check workflow
+  - **Play Mode Auto Check**: Automatically load VRM, apply A-Pose or AnimatorController, and capture screenshot
+  - Runtime VRM loader (`BoneCheckRunner`) for Play mode verification
+  - **AnimatorController Screenshot**: Capture screenshot with custom AnimatorController animation
+  - AnimatorController selection UI with wait time configuration
+- New Sample: Bone Check
+  - Includes UnityChanLocomotions AnimatorController and animation files
+  - Ready to use after importing from Package Manager
+
+### Changed
+- Export Report Window layout improved with Bug Report and Bone Check buttons
+
+### Fixed
+- Multi-angle camera positioning for full-body capture
+
+---
+
 ## [0.1.1] - 2025-11-28
 
 ### Changed

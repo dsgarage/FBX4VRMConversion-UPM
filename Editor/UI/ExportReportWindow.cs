@@ -19,6 +19,15 @@ namespace DSGarage.FBX4VRM.Editor.UI
         private bool _showWarnings = true;
         private bool _showErrors = true;
 
+        // エクスポートされたVRMのパス（ボーンチェック用）
+        private static string _lastExportedVrmPath;
+        private static GameObject _lastExportedModel;
+
+        // AnimatorController設定
+        private RuntimeAnimatorController _selectedAnimatorController;
+        private float _animationWaitTime = 1.0f;
+        private bool _showAnimatorSettings = false;
+
         // スタイルキャッシュ
         private GUIStyle _headerStyle;
         private GUIStyle _infoStyle;
@@ -29,6 +38,9 @@ namespace DSGarage.FBX4VRM.Editor.UI
 
         public static void Show(ExportReport report)
         {
+            // VRMパスを設定（エクスポート成功時にA-Poseスクリーンショットボタンを有効にするため）
+            _lastExportedVrmPath = report?.OutputPath;
+
             var window = GetWindow<ExportReportWindow>();
             window.titleContent = new GUIContent(Localize.Get("エクスポートレポート", "Export Report"));
             window._report = report;
@@ -36,10 +48,28 @@ namespace DSGarage.FBX4VRM.Editor.UI
             window.Show();
         }
 
+        public static void Show(ExportReport report, GameObject exportedModel)
+        {
+            _lastExportedModel = exportedModel;
+            _lastExportedVrmPath = report?.OutputPath;
+            Show(report);
+        }
+
         public static void Show(PipelineResult pipelineResult, ExportContext context)
         {
             var report = ExportReport.FromPipelineResult(pipelineResult, context);
+            _lastExportedModel = context?.ClonedRoot;
+            _lastExportedVrmPath = report?.OutputPath;
             Show(report);
+        }
+
+        /// <summary>
+        /// エクスポート後のモデルを設定（外部から呼び出し用）
+        /// </summary>
+        public static void SetExportedModel(GameObject model, string vrmPath)
+        {
+            _lastExportedModel = model;
+            _lastExportedVrmPath = vrmPath;
         }
 
         private void InitStyles()
@@ -84,13 +114,13 @@ namespace DSGarage.FBX4VRM.Editor.UI
             DrawSummary();
             EditorGUILayout.Space(10);
 
+            DrawActions();
+            EditorGUILayout.Space(10);
+
             DrawFilters();
             EditorGUILayout.Space(5);
 
             DrawNotifications();
-            EditorGUILayout.Space(10);
-
-            DrawActions();
 
             EditorGUILayout.EndScrollView();
         }
@@ -224,6 +254,108 @@ namespace DSGarage.FBX4VRM.Editor.UI
 
         private void DrawActions()
         {
+            var hasBugReport = BugReportService.CachedReport != null;
+
+            // VRMをインポート（ボーンチェック / シェーダーチェック）
+            if (_report.Success)
+            {
+                var hasVrmPath = !string.IsNullOrEmpty(_lastExportedVrmPath) &&
+                                 System.IO.File.Exists(_lastExportedVrmPath);
+
+                // A-poseスクリーンショットを取得（BugReportからあれば使用）
+                byte[] screenshotBytes = null;
+                if (hasBugReport && BugReportService.CachedReport?.ScreenshotBytes != null)
+                {
+                    screenshotBytes = BugReportService.CachedReport.ScreenshotBytes;
+                }
+
+                using (new EditorGUI.DisabledScope(!hasVrmPath))
+                {
+                    using (new EditorGUILayout.HorizontalScope())
+                    {
+                        // ボーンチェック
+                        if (GUILayout.Button(
+                            Localize.Get("ボーンチェック", "Bone Check"),
+                            GUILayout.Height(30)))
+                        {
+                            if (screenshotBytes != null && screenshotBytes.Length > 0)
+                            {
+                                BoneCheckWindow.ShowWithVrmPathAndScreenshot(_lastExportedVrmPath, screenshotBytes);
+                            }
+                            else
+                            {
+                                BoneCheckWindow.ShowWithVrmPath(_lastExportedVrmPath);
+                            }
+                        }
+
+                        // シェーダーチェック
+                        if (GUILayout.Button(
+                            Localize.Get("シェーダーチェック", "Shader Check"),
+                            GUILayout.Height(30)))
+                        {
+                            if (screenshotBytes != null && screenshotBytes.Length > 0)
+                            {
+                                // モデルが設定されていればスクリーンショット付きで開く
+                                if (_lastExportedModel != null)
+                                {
+                                    ShaderCheckWindow.ShowWithScreenshot(_lastExportedModel, screenshotBytes);
+                                }
+                                else
+                                {
+                                    ShaderCheckWindow.ShowWithVrmPath(_lastExportedVrmPath);
+                                }
+                            }
+                            else
+                            {
+                                ShaderCheckWindow.ShowWithVrmPath(_lastExportedVrmPath);
+                            }
+                        }
+                    }
+                }
+
+                if (!hasVrmPath)
+                {
+                    EditorGUILayout.HelpBox(
+                        Localize.Get(
+                            "VRMファイルが見つかりません。",
+                            "VRM file not found."),
+                        MessageType.Warning);
+                }
+            }
+
+            EditorGUILayout.Space(5);
+
+            // 不具合を報告ボタン
+            var bugReportStyle = new GUIStyle(GUI.skin.button)
+            {
+                fontStyle = FontStyle.Bold,
+                fontSize = 13
+            };
+
+            if (hasBugReport)
+            {
+                if (GUILayout.Button(
+                    Localize.Get("不具合を報告", "Report Issue"),
+                    bugReportStyle,
+                    GUILayout.Height(35)))
+                {
+                    BugReportWindow.Show(BugReportService.CachedReport);
+                }
+            }
+            else
+            {
+                using (new EditorGUI.DisabledScope(true))
+                {
+                    GUILayout.Button(
+                        Localize.Get("不具合報告データなし", "No Bug Report Data"),
+                        bugReportStyle,
+                        GUILayout.Height(35));
+                }
+            }
+
+            EditorGUILayout.Space(10);
+
+            // レポート保存・クリップボードにコピー
             using (new EditorGUILayout.HorizontalScope())
             {
                 if (GUILayout.Button(Localize.SaveReport, GUILayout.Height(30)))
@@ -235,14 +367,149 @@ namespace DSGarage.FBX4VRM.Editor.UI
                 {
                     CopyToClipboard();
                 }
+            }
+        }
 
-                if (_report.Success && !string.IsNullOrEmpty(_report.OutputPath))
-                {
-                    if (GUILayout.Button(Localize.ShowInFinder, GUILayout.Height(30)))
-                    {
-                        EditorUtility.RevealInFinder(_report.OutputPath);
-                    }
-                }
+        private void RunPlayModeBoneCheck(string vrmPath)
+        {
+            if (string.IsNullOrEmpty(vrmPath) || !System.IO.File.Exists(vrmPath))
+            {
+                Debug.LogError($"[FBX4VRM] VRM file not found: {vrmPath}");
+                return;
+            }
+
+            // スクリーンショット保存パスを生成
+            var modelName = _report != null
+                ? System.IO.Path.GetFileNameWithoutExtension(_report.OutputPath)
+                : "bonecheck";
+            var fileName = $"{modelName}_apose_{System.DateTime.Now:yyyyMMdd_HHmmss}.png";
+            var directory = ReportManager.GetReportDirectory();
+
+            if (!System.IO.Directory.Exists(directory))
+            {
+                System.IO.Directory.CreateDirectory(directory);
+            }
+
+            var screenshotPath = System.IO.Path.Combine(directory, fileName);
+
+            // Playモードで自動ボーンチェック実行
+            // BoneCheckWindowが結果のダイアログを表示するので、コールバックは不要
+            BoneCheckWindow.RunAutoCheck(vrmPath, screenshotPath, null);
+        }
+
+        private void RunPlayModeBoneCheckWithAnimator(string vrmPath, RuntimeAnimatorController animatorController)
+        {
+            if (string.IsNullOrEmpty(vrmPath) || !System.IO.File.Exists(vrmPath))
+            {
+                Debug.LogError($"[FBX4VRM] VRM file not found: {vrmPath}");
+                return;
+            }
+
+            if (animatorController == null)
+            {
+                Debug.LogError("[FBX4VRM] AnimatorController is null");
+                return;
+            }
+
+            // AnimatorControllerのResourcesパスを取得
+            var assetPath = AssetDatabase.GetAssetPath(animatorController);
+            var resourcesPath = GetResourcesPath(assetPath);
+
+            if (string.IsNullOrEmpty(resourcesPath))
+            {
+                EditorUtility.DisplayDialog(
+                    Localize.Get("エラー", "Error"),
+                    Localize.Get(
+                        "AnimatorControllerはResourcesフォルダ内に配置してください。\n" +
+                        $"現在のパス: {assetPath}",
+                        "Please place the AnimatorController in a Resources folder.\n" +
+                        $"Current path: {assetPath}"),
+                    "OK");
+                return;
+            }
+
+            // スクリーンショット保存パスを生成
+            var modelName = _report != null
+                ? System.IO.Path.GetFileNameWithoutExtension(_report.OutputPath)
+                : "bonecheck";
+            var fileName = $"{modelName}_{animatorController.name}_{System.DateTime.Now:yyyyMMdd_HHmmss}.png";
+            var directory = ReportManager.GetReportDirectory();
+
+            if (!System.IO.Directory.Exists(directory))
+            {
+                System.IO.Directory.CreateDirectory(directory);
+            }
+
+            var screenshotPath = System.IO.Path.Combine(directory, fileName);
+
+            // Playモードで AnimatorController を使用してボーンチェック実行
+            BoneCheckWindow.RunAutoCheckWithAnimator(vrmPath, screenshotPath, resourcesPath, _animationWaitTime, null);
+        }
+
+        /// <summary>
+        /// AssetPathからResourcesフォルダ内の相対パスを取得
+        /// </summary>
+        private string GetResourcesPath(string assetPath)
+        {
+            // "Assets/.../Resources/xxx/yyy.controller" → "xxx/yyy"
+            var resourcesIndex = assetPath.IndexOf("/Resources/");
+            if (resourcesIndex < 0)
+            {
+                return null;
+            }
+
+            var relativePath = assetPath.Substring(resourcesIndex + "/Resources/".Length);
+            // 拡張子を除去
+            var lastDot = relativePath.LastIndexOf('.');
+            if (lastDot > 0)
+            {
+                relativePath = relativePath.Substring(0, lastDot);
+            }
+
+            return relativePath;
+        }
+
+        private void ImportAndCheckVrm(string vrmPath)
+        {
+            if (string.IsNullOrEmpty(vrmPath) || !System.IO.File.Exists(vrmPath))
+            {
+                Debug.LogError($"[FBX4VRM] VRM file not found: {vrmPath}");
+                return;
+            }
+
+            // VRMをAssetsにコピー
+            var fileName = System.IO.Path.GetFileName(vrmPath);
+            var destFolder = "Assets/ImportedVRM";
+            if (!AssetDatabase.IsValidFolder(destFolder))
+            {
+                AssetDatabase.CreateFolder("Assets", "ImportedVRM");
+            }
+
+            var destPath = $"{destFolder}/{fileName}";
+            if (System.IO.File.Exists(destPath))
+            {
+                System.IO.File.Delete(destPath);
+            }
+            System.IO.File.Copy(vrmPath, destPath);
+            AssetDatabase.Refresh();
+
+            // VRMをロード
+            var vrm = AssetDatabase.LoadAssetAtPath<GameObject>(destPath);
+            if (vrm != null)
+            {
+                // シーンにインスタンス化
+                var instance = UnityEngine.Object.Instantiate(vrm);
+                instance.name = vrm.name;
+                Selection.activeGameObject = instance;
+
+                // ボーンチェックウィンドウを開く
+                BoneCheckWindow.Show(instance);
+
+                Debug.Log($"[FBX4VRM] VRM imported and instantiated: {instance.name}");
+            }
+            else
+            {
+                Debug.LogError($"[FBX4VRM] Failed to load VRM: {destPath}");
             }
         }
 

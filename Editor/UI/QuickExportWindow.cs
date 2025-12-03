@@ -322,6 +322,18 @@ namespace DSGarage.FBX4VRM.Editor.UI
 
                     // レポート生成
                     var report = ExportReport.FromPipelineResult(pipelineResult, context);
+                    Debug.Log($"[QuickExport] Pipeline result: {pipelineResult.Success}, creating bug report...");
+
+                    // 不具合報告用にスクリーンショットを撮影してキャッシュ（DestroyImmediate前に行う）
+                    try
+                    {
+                        BugReportService.CreateFromExportResult(cloned, report, null, captureScreenshot: true);
+                        Debug.Log($"[QuickExport] Bug report created, cached: {BugReportService.CachedReport?.ReportId ?? "null"}");
+                    }
+                    catch (System.Exception ex)
+                    {
+                        Debug.LogError($"[QuickExport] Failed to create bug report: {ex.Message}\n{ex.StackTrace}");
+                    }
 
                     if (pipelineResult.Success)
                     {
@@ -342,6 +354,7 @@ namespace DSGarage.FBX4VRM.Editor.UI
                     {
                         // パイプライン失敗ログ
                         ExportLogger.LogPipelineComplete(false);
+
                         ExportReportWindow.Show(report);
                     }
                 }
@@ -480,20 +493,22 @@ namespace DSGarage.FBX4VRM.Editor.UI
                 message += $"\n\n⚠️ {warningCount} warning(s) - see report for details";
             }
 
+            message += "\n\n📸 Screenshot captured for bug report";
+
             var result = EditorUtility.DisplayDialogComplex(
                 "Export Complete",
                 message,
                 "Show in Finder",
                 "Close",
-                "View Report");
+                "Report Issue");
 
             switch (result)
             {
                 case 0: // Show in Finder
                     EditorUtility.RevealInFinder(path);
                     break;
-                case 2: // View Report
-                    ExportReportWindow.Show(report);
+                case 2: // Report Issue
+                    BugReportWindow.Show(BugReportService.CachedReport);
                     break;
             }
         }

@@ -5,12 +5,13 @@ using DSGarage.FBX4VRM.Editor.Localization;
 using DSGarage.FBX4VRM.Editor.Logging;
 using DSGarage.FBX4VRM.Editor.Processors;
 using DSGarage.FBX4VRM.Editor.Reports;
+using DSGarage.FBX4VRM.Editor.Settings;
 
 namespace DSGarage.FBX4VRM.Editor.UI
 {
     /// <summary>
     /// FBX4VRM Export ウィンドウ
-    /// Phase 0: 最小限のPrefabインスタンス→VRM Exportを提供
+    /// 詳細な変換オプションを提供
     /// </summary>
     public class FBX4VRMExportWindow : EditorWindow
     {
@@ -18,7 +19,17 @@ namespace DSGarage.FBX4VRM.Editor.UI
         private string _outputPath = "";
         private int _vrmVersion = 0; // 0 = VRM 0.x, 1 = VRM 1.0
         private Vector2 _scrollPosition;
-        private bool _showAdvanced;
+
+        // 詳細設定のFoldout状態
+        private bool _showMaterialSettings = true;
+        private bool _showSkeletonSettings = false;
+        private bool _showExpressionSettings = false;
+        private bool _showSpringBoneSettings = false;
+        private bool _showOutputSettings = false;
+        private bool _showLanguageSettings = false;
+
+        // 変換設定
+        private ConversionSettings _settings = new ConversionSettings();
 
         private ProcessorPipeline _pipeline;
         private PipelineResult _lastResult;
@@ -129,6 +140,7 @@ namespace DSGarage.FBX4VRM.Editor.UI
             _vrmVersion = EditorGUILayout.Popup("VRM Version",
                 _vrmVersion,
                 new string[] { "VRM 0.x", "VRM 1.0 (Avatar構築にバグあり)" });
+            _settings.vrmVersion = _vrmVersion;
 
             if (_vrmVersion == 1)
             {
@@ -139,37 +151,163 @@ namespace DSGarage.FBX4VRM.Editor.UI
                     MessageType.Warning);
             }
 
-            // 出力先
-            using (new EditorGUILayout.HorizontalScope())
-            {
-                _outputPath = EditorGUILayout.TextField("Output Folder", _outputPath);
-                if (GUILayout.Button("...", GUILayout.Width(30)))
-                {
-                    var path = EditorUtility.OpenFolderPanel("Select Output Folder", _outputPath, "");
-                    if (!string.IsNullOrEmpty(path))
-                    {
-                        _outputPath = path;
-                    }
-                }
-            }
+            EditorGUILayout.Space(5);
 
-            // 詳細設定
-            _showAdvanced = EditorGUILayout.Foldout(_showAdvanced, "Advanced");
-            if (_showAdvanced)
+            // ========== マテリアル変換設定 ==========
+            _showMaterialSettings = EditorGUILayout.Foldout(_showMaterialSettings,
+                Localize.Get("マテリアル変換", "Material Conversion"));
+            if (_showMaterialSettings)
             {
                 EditorGUI.indentLevel++;
-
-                // 言語設定
-                var langIndex = Localize.IsJapanese ? 0 : 1;
-                var newLangIndex = EditorGUILayout.Popup("Language / 言語", langIndex, new[] { "日本語", "English" });
-                if (newLangIndex != langIndex)
+                using (new EditorGUILayout.VerticalScope("box"))
                 {
-                    Localize.CurrentLanguage = newLangIndex == 0 ? Localize.Language.Japanese : Localize.Language.English;
-                    Repaint();
-                }
+                    _settings.enableLilToonConversion = EditorGUILayout.Toggle(
+                        Localize.Get("lilToon → MToon 変換", "lilToon → MToon Conversion"),
+                        _settings.enableLilToonConversion);
 
+                    _settings.enableHdrClamp = EditorGUILayout.Toggle(
+                        Localize.Get("HDR値クランプ (0-1)", "HDR Value Clamp (0-1)"),
+                        _settings.enableHdrClamp);
+
+                    _settings.enableOutlineConversion = EditorGUILayout.Toggle(
+                        Localize.Get("Outline変換", "Outline Conversion"),
+                        _settings.enableOutlineConversion);
+
+                    _settings.transparentMode = (TransparentMode)EditorGUILayout.EnumPopup(
+                        Localize.Get("透過処理モード", "Transparent Mode"),
+                        _settings.transparentMode);
+                }
                 EditorGUI.indentLevel--;
             }
+
+            // ========== 骨格・ポーズ設定 ==========
+            _showSkeletonSettings = EditorGUILayout.Foldout(_showSkeletonSettings,
+                Localize.Get("骨格・ポーズ", "Skeleton / Pose"));
+            if (_showSkeletonSettings)
+            {
+                EditorGUI.indentLevel++;
+                using (new EditorGUILayout.VerticalScope("box"))
+                {
+                    _settings.enableTPoseNormalization = EditorGUILayout.Toggle(
+                        Localize.Get("T-Pose正規化", "T-Pose Normalization"),
+                        _settings.enableTPoseNormalization);
+
+                    _settings.enableArmatureRotationBake = EditorGUILayout.Toggle(
+                        Localize.Get("Armature回転ベイク", "Armature Rotation Bake"),
+                        _settings.enableArmatureRotationBake);
+
+                    using (new EditorGUI.DisabledGroupScope(_vrmVersion != 1))
+                    {
+                        _settings.enableBoneOrientationNormalization = EditorGUILayout.Toggle(
+                            Localize.Get("ボーン向き正規化 (VRM 1.0)", "Bone Orientation Normalization (VRM 1.0)"),
+                            _settings.enableBoneOrientationNormalization);
+                    }
+                }
+                EditorGUI.indentLevel--;
+            }
+
+            // ========== 表情 (Expression) 設定 ==========
+            _showExpressionSettings = EditorGUILayout.Foldout(_showExpressionSettings,
+                Localize.Get("表情 (Expression)", "Expression"));
+            if (_showExpressionSettings)
+            {
+                EditorGUI.indentLevel++;
+                using (new EditorGUILayout.VerticalScope("box"))
+                {
+                    _settings.enableExpressionAutoMapping = EditorGUILayout.Toggle(
+                        Localize.Get("BlendShape自動マッピング", "BlendShape Auto Mapping"),
+                        _settings.enableExpressionAutoMapping);
+
+                    _settings.expressionNamingConvention = (NamingConvention)EditorGUILayout.EnumPopup(
+                        Localize.Get("命名規則", "Naming Convention"),
+                        _settings.expressionNamingConvention);
+                }
+                EditorGUI.indentLevel--;
+            }
+
+            // ========== 物理 (SpringBone) 設定 ==========
+            _showSpringBoneSettings = EditorGUILayout.Foldout(_showSpringBoneSettings,
+                Localize.Get("物理 (SpringBone)", "Physics (SpringBone)"));
+            if (_showSpringBoneSettings)
+            {
+                EditorGUI.indentLevel++;
+                using (new EditorGUILayout.VerticalScope("box"))
+                {
+                    _settings.enableSpringBoneConversion = EditorGUILayout.Toggle(
+                        Localize.Get("PhysBone/DynamicBone変換", "PhysBone/DynamicBone Conversion"),
+                        _settings.enableSpringBoneConversion);
+
+                    _settings.enableColliderConversion = EditorGUILayout.Toggle(
+                        Localize.Get("Collider変換", "Collider Conversion"),
+                        _settings.enableColliderConversion);
+                }
+                EditorGUI.indentLevel--;
+            }
+
+            // ========== 出力設定 ==========
+            _showOutputSettings = EditorGUILayout.Foldout(_showOutputSettings,
+                Localize.Get("出力設定", "Output Settings"));
+            if (_showOutputSettings)
+            {
+                EditorGUI.indentLevel++;
+                using (new EditorGUILayout.VerticalScope("box"))
+                {
+                    using (new EditorGUILayout.HorizontalScope())
+                    {
+                        _outputPath = EditorGUILayout.TextField(
+                            Localize.Get("出力フォルダ", "Output Folder"),
+                            _outputPath);
+                        if (GUILayout.Button("...", GUILayout.Width(30)))
+                        {
+                            var path = EditorUtility.OpenFolderPanel("Select Output Folder", _outputPath, "");
+                            if (!string.IsNullOrEmpty(path))
+                            {
+                                _outputPath = path;
+                            }
+                        }
+                    }
+                    _settings.outputFolder = _outputPath;
+
+                    _settings.fileNameMode = (FileNameMode)EditorGUILayout.EnumPopup(
+                        Localize.Get("ファイル名", "File Name"),
+                        _settings.fileNameMode);
+
+                    if (_settings.fileNameMode == FileNameMode.Custom)
+                    {
+                        _settings.customFileName = EditorGUILayout.TextField(
+                            Localize.Get("カスタムファイル名", "Custom File Name"),
+                            _settings.customFileName);
+                    }
+                }
+                EditorGUI.indentLevel--;
+            }
+
+            // ========== 言語設定 ==========
+            _showLanguageSettings = EditorGUILayout.Foldout(_showLanguageSettings,
+                Localize.Get("言語設定", "Language Settings"));
+            if (_showLanguageSettings)
+            {
+                EditorGUI.indentLevel++;
+                using (new EditorGUILayout.VerticalScope("box"))
+                {
+                    var langIndex = Localize.IsJapanese ? 0 : 1;
+                    var newLangIndex = EditorGUILayout.Popup("Language / 言語", langIndex, new[] { "日本語", "English" });
+                    if (newLangIndex != langIndex)
+                    {
+                        Localize.CurrentLanguage = newLangIndex == 0 ? Localize.Language.Japanese : Localize.Language.English;
+                        Repaint();
+                    }
+                }
+                EditorGUI.indentLevel--;
+            }
+        }
+
+        /// <summary>
+        /// 現在の設定を取得（バグレポート用）
+        /// </summary>
+        public ConversionSettings GetCurrentSettings()
+        {
+            return _settings.Clone();
         }
 
         private void DrawExportButton()
@@ -487,6 +625,18 @@ namespace DSGarage.FBX4VRM.Editor.UI
 
                 // レポート生成
                 var report = ExportReport.FromPipelineResult(_lastResult, context);
+
+                // 不具合報告用にスクリーンショットを撮影してキャッシュ（DestroyImmediate前に行う）
+                Debug.Log($"[FBX4VRMExport] Creating bug report for model: {cloned.name}");
+                try
+                {
+                    BugReportService.CreateFromExportResult(cloned, report, _settings, captureScreenshot: true);
+                    Debug.Log($"[FBX4VRMExport] Bug report created, cached: {BugReportService.CachedReport?.ReportId ?? "null"}");
+                }
+                catch (System.Exception ex)
+                {
+                    Debug.LogError($"[FBX4VRMExport] Failed to create bug report: {ex.Message}\n{ex.StackTrace}");
+                }
 
                 if (_lastResult.Success)
                 {
