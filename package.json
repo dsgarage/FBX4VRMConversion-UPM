@@ -1,6 +1,6 @@
 {
   "name": "com.dsgarage.fbx4vrmconversion",
-  "version": "0.2.0",
+  "version": "0.0.2",
   "displayName": "FBX4VRM Conversion",
   "description": "Unity Editor Extension for converting FBX/Prefab to VRM format with lilToon support, notification system, and preset management.",
   "unity": "2021.3",
@@ -36,11 +36,6 @@
     "url": "https://github.com/dsgarage/FBX4VRMConversion.git"
   },
   "samples": [
-    {
-      "displayName": "Sample Presets",
-      "description": "Example conversion presets for common use cases",
-      "path": "Samples~/Presets"
-    },
     {
       "displayName": "Bone Check",
       "description": "Bone verification tools using UnityChan animations",

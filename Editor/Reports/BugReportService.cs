@@ -72,6 +72,67 @@ namespace DSGarage.FBX4VRM.Editor.Reports
         public List<AvatarInfo> avatars;
         public string error;
     }
+
+    /// <summary>
+    /// アバターバージョン情報
+    /// </summary>
+    [Serializable]
+    public class AvatarVersionInfo
+    {
+        public int id;
+        public string package_version;
+        public int version_index;
+        public string child_issue_number;
+        public string child_issue_url;
+        // result_successはnullable bool - JsonUtilityでは直接サポートされない
+        [NonSerialized]
+        public bool? ResultSuccess;
+    }
+
+    /// <summary>
+    /// アバター作成APIのレスポンス
+    /// </summary>
+    [Serializable]
+    public class CreateAvatarResponse
+    {
+        public bool success;
+        public string message;
+        public AvatarInfo avatar;
+    }
+
+    /// <summary>
+    /// バージョン作成APIのレスポンス
+    /// </summary>
+    [Serializable]
+    public class CreateVersionResponse
+    {
+        public bool success;
+        public string message;
+        public AvatarVersionInfo version;
+    }
+
+    /// <summary>
+    /// アバター作成リクエスト
+    /// </summary>
+    [Serializable]
+    public class CreateAvatarRequest
+    {
+        public string name;
+        public string display_name;
+        public string booth_url;
+        public bool create_parent_issue;
+    }
+
+    /// <summary>
+    /// バージョン作成リクエスト
+    /// </summary>
+    [Serializable]
+    public class CreateVersionRequest
+    {
+        public string package_version;
+        public bool create_child_issue;
+        // result_successはnullable - 別途処理
+    }
     /// <summary>
     /// 不具合報告サービス
     /// メモリ上のキャッシュ管理とサーバーへの送信
@@ -602,6 +663,219 @@ namespace DSGarage.FBX4VRM.Editor.Reports
             CachedAvatarList = null;
             AvatarListLastFetched = DateTime.MinValue;
             Debug.Log("[BugReportService] Avatar list cache cleared");
+        }
+
+        /// <summary>
+        /// 新規アバターを作成
+        /// </summary>
+        /// <param name="name">アバター名（必須）</param>
+        /// <param name="displayName">表示名（オプション）</param>
+        /// <param name="boothUrl">Booth URL（オプション）</param>
+        /// <param name="createParentIssue">親GitHub Issueを作成するか</param>
+        /// <param name="onComplete">完了コールバック (success, avatar, errorMessage)</param>
+        public static void CreateAvatar(
+            string name,
+            string displayName = null,
+            string boothUrl = null,
+            bool createParentIssue = true,
+            Action<bool, AvatarInfo, string> onComplete = null)
+        {
+            if (string.IsNullOrEmpty(name))
+            {
+                onComplete?.Invoke(false, null, "Avatar name is required");
+                return;
+            }
+
+            var serverUrl = ServerUrl;
+            if (string.IsNullOrEmpty(serverUrl))
+            {
+                onComplete?.Invoke(false, null, "Server URL is not configured");
+                return;
+            }
+
+            var uri = new Uri(serverUrl);
+            var apiUrl = $"{uri.Scheme}://{uri.Host}:{uri.Port}/api/v1/fbx4vrm/avatars/db";
+
+            var request = new CreateAvatarRequest
+            {
+                name = name,
+                display_name = displayName,
+                booth_url = boothUrl,
+                create_parent_issue = createParentIssue
+            };
+
+            EditorCoroutineRunner.StartCoroutine(CreateAvatarCoroutine(apiUrl, request, onComplete));
+        }
+
+        /// <summary>
+        /// アバター作成コルーチン
+        /// </summary>
+        private static IEnumerator CreateAvatarCoroutine(
+            string url,
+            CreateAvatarRequest request,
+            Action<bool, AvatarInfo, string> onComplete)
+        {
+            var json = JsonUtility.ToJson(request);
+            var jsonBytes = Encoding.UTF8.GetBytes(json);
+
+            using (var webRequest = new UnityWebRequest(url, "POST"))
+            {
+#if UNITY_EDITOR
+                webRequest.certificateHandler = new AcceptAllCertificatesHandler();
+#endif
+                webRequest.uploadHandler = new UploadHandlerRaw(jsonBytes);
+                webRequest.downloadHandler = new DownloadHandlerBuffer();
+                webRequest.SetRequestHeader("Content-Type", "application/json");
+
+                Debug.Log($"[BugReportService] Creating avatar: {request.name}");
+
+                yield return webRequest.SendWebRequest();
+
+                if (webRequest.result == UnityWebRequest.Result.Success)
+                {
+                    try
+                    {
+                        var responseText = webRequest.downloadHandler.text;
+                        var response = JsonUtility.FromJson<CreateAvatarResponse>(responseText);
+
+                        if (response != null && response.success)
+                        {
+                            Debug.Log($"[BugReportService] Avatar created: {response.avatar?.name}");
+                            // キャッシュをクリアして次回再取得させる
+                            ClearAvatarListCache();
+                            onComplete?.Invoke(true, response.avatar, null);
+                        }
+                        else
+                        {
+                            onComplete?.Invoke(false, null, response?.message ?? "Unknown error");
+                        }
+                    }
+                    catch (Exception ex)
+                    {
+                        onComplete?.Invoke(false, null, ex.Message);
+                    }
+                }
+                else
+                {
+                    var error = webRequest.error ?? "Unknown error";
+                    var responseBody = webRequest.downloadHandler?.text ?? "";
+                    Debug.LogWarning($"[BugReportService] Failed to create avatar: {error}");
+                    onComplete?.Invoke(false, null, $"{error}\n{responseBody}");
+                }
+            }
+        }
+
+        /// <summary>
+        /// 新規バージョンを作成
+        /// </summary>
+        /// <param name="avatarName">アバター名（必須）</param>
+        /// <param name="packageVersion">パッケージバージョン（必須）</param>
+        /// <param name="resultSuccess">変換成功フラグ（オプション）</param>
+        /// <param name="createChildIssue">子GitHub Issueを作成するか</param>
+        /// <param name="onComplete">完了コールバック (success, version, errorMessage)</param>
+        public static void CreateVersion(
+            string avatarName,
+            string packageVersion,
+            bool? resultSuccess = null,
+            bool createChildIssue = true,
+            Action<bool, AvatarVersionInfo, string> onComplete = null)
+        {
+            if (string.IsNullOrEmpty(avatarName))
+            {
+                onComplete?.Invoke(false, null, "Avatar name is required");
+                return;
+            }
+
+            if (string.IsNullOrEmpty(packageVersion))
+            {
+                onComplete?.Invoke(false, null, "Package version is required");
+                return;
+            }
+
+            var serverUrl = ServerUrl;
+            if (string.IsNullOrEmpty(serverUrl))
+            {
+                onComplete?.Invoke(false, null, "Server URL is not configured");
+                return;
+            }
+
+            var uri = new Uri(serverUrl);
+            var encodedAvatarName = Uri.EscapeDataString(avatarName);
+            var apiUrl = $"{uri.Scheme}://{uri.Host}:{uri.Port}/api/v1/fbx4vrm/avatars/db/{encodedAvatarName}/versions";
+
+            EditorCoroutineRunner.StartCoroutine(
+                CreateVersionCoroutine(apiUrl, packageVersion, resultSuccess, createChildIssue, onComplete));
+        }
+
+        /// <summary>
+        /// バージョン作成コルーチン
+        /// </summary>
+        private static IEnumerator CreateVersionCoroutine(
+            string url,
+            string packageVersion,
+            bool? resultSuccess,
+            bool createChildIssue,
+            Action<bool, AvatarVersionInfo, string> onComplete)
+        {
+            // JSONを手動で構築（result_successがnullableのため）
+            var jsonBuilder = new StringBuilder();
+            jsonBuilder.Append("{");
+            jsonBuilder.Append($"\"package_version\":\"{packageVersion}\"");
+            jsonBuilder.Append($",\"create_child_issue\":{(createChildIssue ? "true" : "false")}");
+            if (resultSuccess.HasValue)
+            {
+                jsonBuilder.Append($",\"result_success\":{(resultSuccess.Value ? "true" : "false")}");
+            }
+            jsonBuilder.Append("}");
+
+            var json = jsonBuilder.ToString();
+            var jsonBytes = Encoding.UTF8.GetBytes(json);
+
+            using (var webRequest = new UnityWebRequest(url, "POST"))
+            {
+#if UNITY_EDITOR
+                webRequest.certificateHandler = new AcceptAllCertificatesHandler();
+#endif
+                webRequest.uploadHandler = new UploadHandlerRaw(jsonBytes);
+                webRequest.downloadHandler = new DownloadHandlerBuffer();
+                webRequest.SetRequestHeader("Content-Type", "application/json");
+
+                Debug.Log($"[BugReportService] Creating version: {packageVersion}");
+
+                yield return webRequest.SendWebRequest();
+
+                if (webRequest.result == UnityWebRequest.Result.Success)
+                {
+                    try
+                    {
+                        var responseText = webRequest.downloadHandler.text;
+                        var response = JsonUtility.FromJson<CreateVersionResponse>(responseText);
+
+                        if (response != null && response.success)
+                        {
+                            Debug.Log($"[BugReportService] Version created: {response.version?.package_version}");
+                            // キャッシュをクリアして次回再取得させる
+                            ClearAvatarListCache();
+                            onComplete?.Invoke(true, response.version, null);
+                        }
+                        else
+                        {
+                            onComplete?.Invoke(false, null, response?.message ?? "Unknown error");
+                        }
+                    }
+                    catch (Exception ex)
+                    {
+                        onComplete?.Invoke(false, null, ex.Message);
+                    }
+                }
+                else
+                {
+                    var error = webRequest.error ?? "Unknown error";
+                    var responseBody = webRequest.downloadHandler?.text ?? "";
+                    Debug.LogWarning($"[BugReportService] Failed to create version: {error}");
+                    onComplete?.Invoke(false, null, $"{error}\n{responseBody}");
+                }
+            }
         }
 
         /// <summary>

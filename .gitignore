@@ -125,3 +125,7 @@ Docs/
 
 # Local bug reports (contains local paths)
 FBX4VRM_Reports/
+
+# Development scripts
+build-package.sh
+instructions*.yml
