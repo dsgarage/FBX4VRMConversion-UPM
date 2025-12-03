@@ -1,18 +1,14 @@
 {
   "name": "com.dsgarage.fbx4vrmconversion",
-  "version": "0.0.2",
+  "version": "0.0.3",
   "displayName": "FBX4VRM Conversion",
-  "description": "Unity Editor Extension for converting FBX/Prefab to VRM format with lilToon support, notification system, and preset management.",
+  "description": "Unity Editor Extension for converting FBX/Prefab to VRM format with lilToon support, notification system, and preset management. Requires UniVRM-fork to be installed separately.",
   "unity": "2021.3",
   "unityRelease": "0f1",
   "documentationUrl": "https://github.com/dsgarage/FBX4VRMConversion/wiki",
   "changelogUrl": "https://github.com/dsgarage/FBX4VRMConversion/blob/main/CHANGELOG.md",
   "licensesUrl": "https://github.com/dsgarage/FBX4VRMConversion/blob/main/LICENSE",
-  "dependencies": {
-    "com.vrmc.gltf": "https://github.com/dsgarage/UniVRM-fork.git?path=/Packages/UniGLTF#v0.130.1-f2",
-    "com.vrmc.univrm": "https://github.com/dsgarage/UniVRM-fork.git?path=/Packages/VRM#v0.130.1-f2",
-    "com.vrmc.vrm": "https://github.com/dsgarage/UniVRM-fork.git?path=/Packages/VRM10#v0.130.1-f2"
-  },
+  "dependencies": {},
   "vrmCompatibility": {
     "minVersion": "v0.130.1-f2",
     "notes": "Requires UniVRM-fork with export hook support"
