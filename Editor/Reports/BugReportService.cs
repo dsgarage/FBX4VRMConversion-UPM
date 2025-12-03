@@ -139,11 +139,11 @@ namespace DSGarage.FBX4VRM.Editor.Reports
     /// </summary>
     public static class BugReportService
     {
-        // デフォルトサーバーURL - HTTP ポート8001 + キューシステム
-        // URL: http://153.126.176.139:8001/bug-reports/queue/submit
-        // 更新日: 2024-12-03 - キューシステム導入、HTTP:8001に変更
+        // デフォルトサーバーURL - HTTPS ポート8443 + キューシステム
+        // URL: https://153.126.176.139:8443/bug-reports/queue/submit
+        // 更新日: 2024-12-03 - Unity 2022+でHTTPがブロックされるためHTTPSに変更
         // キューシステム: JSONが保存された時点で成功レスポンスを返す（高信頼性）
-        private static readonly string DefaultServerUrlEncoded = "aHR0cDovLzE1My4xMjYuMTc2LjEzOTo4MDAxL2J1Zy1yZXBvcnRzL3F1ZXVlL3N1Ym1pdA==";
+        private static readonly string DefaultServerUrlEncoded = "aHR0cHM6Ly8xNTMuMTI2LjE3Ni4xMzk6ODQ0My9idWctcmVwb3J0cy9xdWV1ZS9zdWJtaXQ=";
 
         /// <summary>
         /// 報告先サーバーURL（設定可能）

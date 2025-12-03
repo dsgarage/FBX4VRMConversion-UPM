@@ -1,6 +1,6 @@
 {
   "name": "com.dsgarage.fbx4vrmconversion",
-  "version": "0.0.4",
+  "version": "0.0.5",
   "displayName": "FBX4VRM Conversion",
   "description": "Unity Editor Extension for converting FBX/Prefab to VRM format with lilToon support, notification system, and preset management. Requires UniVRM-fork to be installed separately.",
   "unity": "2021.3",
